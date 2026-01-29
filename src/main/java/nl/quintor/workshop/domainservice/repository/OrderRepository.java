@@ -1,4 +1,4 @@
-package nl.quintor.workshop.domain.repository;
+package nl.quintor.workshop.domainservice.repository;
 
 import nl.quintor.workshop.domain.model.Order;
 
