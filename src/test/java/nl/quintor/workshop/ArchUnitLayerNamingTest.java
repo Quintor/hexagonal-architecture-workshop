@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
-public class ArchUnitLayerNamingTest {
+class ArchUnitLayerNamingTest {
 
     @Test
-    public void service_classes_should_have_suffix() {
+    void service_classes_should_have_suffix() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
@@ -27,7 +27,7 @@ public class ArchUnitLayerNamingTest {
     }
 
     @Test
-    public void repository_classes_should_have_suffix() {
+    void repository_classes_should_have_suffix() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
@@ -42,7 +42,7 @@ public class ArchUnitLayerNamingTest {
     }
 
     @Test
-    public void controller_classes_should_have_suffix() {
+    void controller_classes_should_have_suffix() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()

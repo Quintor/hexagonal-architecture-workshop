@@ -1,7 +1,7 @@
-package nl.quintor.workshop.infrastructure.adapters.secondairy.persistence.mapper;
+package nl.quintor.workshop.infrastructure.adapters.secondary.persistence.mapper;
 
 import nl.quintor.workshop.domain.model.Order;
-import nl.quintor.workshop.infrastructure.adapters.secondairy.persistence.jpa.OrderEntity;
+import nl.quintor.workshop.infrastructure.adapters.secondary.persistence.jpa.OrderEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
