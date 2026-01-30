@@ -1,10 +1,10 @@
-package nl.quintor.workshop.infrastructure.adapters.primairy.controller;
+package nl.quintor.workshop.infrastructure.adapters.inbound.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.quintor.workshop.application.service.OrderService;
-import nl.quintor.workshop.infrastructure.adapters.primairy.dto.OrderDto;
-import nl.quintor.workshop.infrastructure.adapters.primairy.mapper.OrderDtoMapper;
+import nl.quintor.workshop.infrastructure.adapters.inbound.dto.OrderDto;
+import nl.quintor.workshop.infrastructure.adapters.inbound.mapper.OrderDtoMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
