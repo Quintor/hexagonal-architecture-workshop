@@ -1,2 +1,2 @@
 @org.springframework.modulith.NamedInterface("domain-repositories")
-package nl.quintor.workshop.domainservice.repository;
+package nl.quintor.workshop.domain.repository;

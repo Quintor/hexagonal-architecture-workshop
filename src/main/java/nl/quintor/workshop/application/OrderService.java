@@ -1,8 +1,8 @@
-package nl.quintor.workshop.application.service;
+package nl.quintor.workshop.application;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.domain.model.Order;
-import nl.quintor.workshop.domainservice.repository.OrderRepository;
+import nl.quintor.workshop.domain.repository.OrderRepository;
 
 import org.springframework.stereotype.Service;
 

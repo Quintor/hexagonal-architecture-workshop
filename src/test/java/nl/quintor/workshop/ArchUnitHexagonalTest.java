@@ -37,16 +37,14 @@ class ArchUnitHexagonalTest {
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("nl.quintor.workshop.domainservice..")
+                .resideInAPackage("nl.quintor.workshop.domain.service..")
                 .and()
                 .haveSimpleNameNotContaining("package-info")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
                         "nl.quintor.workshop.domain..",
-                        "java..",
-                        // TODO: hier nog naar kijken, geen spring deps in domainservice layer?
-                        "org.springframework..");
+                        "java..");
 
         rule.check(importedClasses);
     }
@@ -57,14 +55,13 @@ class ArchUnitHexagonalTest {
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("nl.quintor.workshop.application..")
+                .resideInAPackage("nl.quintor.workshop.application.service")
                 .and()
                 .haveSimpleNameNotContaining("package-info")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
                         "nl.quintor.workshop.domain..",
-                        "nl.quintor.workshop.domainservice..",
                         "java..",
                         "lombok..",
                         "org.springframework..");
