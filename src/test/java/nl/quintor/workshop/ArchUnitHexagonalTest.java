@@ -50,7 +50,7 @@ class ArchUnitHexagonalTest {
     }
 
     @Test
-    void application_should_only_depend_on_domain_and_domainservice() {
+    void application_should_only_depend_on_domain() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
@@ -69,4 +69,55 @@ class ArchUnitHexagonalTest {
 
         rule.check(importedClasses);
     }
+
+    @Test
+    void infrastructure_primairy_should_only_depend_on_application() {
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
+
+        ArchRule rule = classes()
+                .that()
+                .resideInAPackage("nl.quintor.workshop.infrastructure.adapters.inbound..")
+                .and()
+                .haveSimpleNameNotContaining("package-info")
+                .should()
+                .onlyDependOnClassesThat()
+                .resideInAnyPackage(
+                        "nl.quintor.workshop.domain..",
+                        "nl.quintor.workshop.application..",
+                        "nl.quintor.workshop.infrastructure.adapters.inbound..",
+                        "java..",
+                        "lombok..",
+                        "org.mapstruct..",
+                        "org.slf4j..",
+                        "org.springframework..");
+
+
+        rule.check(importedClasses);
+    }
+
+    @Test
+    void infrastructure_secondairy_should_only_depend_on_domain() {
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
+
+        ArchRule rule = classes()
+                .that()
+                .resideInAPackage("nl.quintor.workshop.infrastructure.adapters.outbound..")
+                .and()
+                .haveSimpleNameNotContaining("package-info")
+                .should()
+                .onlyDependOnClassesThat()
+                .resideInAnyPackage(
+                        "nl.quintor.workshop.domain..",
+                        "java..",
+                        "lombok..",
+                        "org.mapstruct..",
+                        "org.slf4j..",
+                        "org.springframework..");
+
+
+        rule.check(importedClasses);
+    }
+
+
+
 }

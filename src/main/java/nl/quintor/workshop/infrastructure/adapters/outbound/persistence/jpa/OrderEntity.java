@@ -1,4 +1,4 @@
-package nl.quintor.workshop.infrastructure.adapters.secondary.persistence.jpa;
+package nl.quintor.workshop.infrastructure.adapters.outbound.persistence.jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

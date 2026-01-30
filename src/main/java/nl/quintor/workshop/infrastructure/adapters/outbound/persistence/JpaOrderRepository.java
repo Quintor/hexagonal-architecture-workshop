@@ -1,10 +1,10 @@
-package nl.quintor.workshop.infrastructure.adapters.secondary.persistence;
+package nl.quintor.workshop.infrastructure.adapters.outbound.persistence;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.domain.model.Order;
 import nl.quintor.workshop.domain.repository.OrderRepository;
-import nl.quintor.workshop.infrastructure.adapters.secondary.persistence.mapper.OrderEntityMapper;
-import nl.quintor.workshop.infrastructure.adapters.secondary.persistence.spring.SpringDataOrderRepository;
+import nl.quintor.workshop.infrastructure.adapters.outbound.persistence.mapper.OrderEntityMapper;
+import nl.quintor.workshop.infrastructure.adapters.outbound.persistence.spring.SpringDataOrderRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package nl.quintor.workshop.infrastructure.adapters.primary.mapper;
+package nl.quintor.workshop.infrastructure.adapters.inbound.mapper;
 
 import nl.quintor.workshop.domain.model.Order;
-import nl.quintor.workshop.infrastructure.adapters.primary.dto.OrderDto;
+import nl.quintor.workshop.infrastructure.adapters.inbound.dto.OrderDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
