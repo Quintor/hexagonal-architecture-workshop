@@ -2,7 +2,7 @@ package nl.quintor.workshop.infrastructure.adapters.primary.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.quintor.workshop.application.OrderService;
+import nl.quintor.workshop.application.service.OrderService;
 import nl.quintor.workshop.infrastructure.adapters.primary.dto.OrderDto;
 import nl.quintor.workshop.infrastructure.adapters.primary.mapper.OrderDtoMapper;
 import org.springframework.web.bind.annotation.GetMapping;

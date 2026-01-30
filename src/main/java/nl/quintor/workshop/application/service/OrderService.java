@@ -1,4 +1,4 @@
-package nl.quintor.workshop.application;
+package nl.quintor.workshop.application.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.domain.model.Order;

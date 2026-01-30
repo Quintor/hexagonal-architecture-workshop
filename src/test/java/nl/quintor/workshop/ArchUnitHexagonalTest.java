@@ -66,6 +66,7 @@ class ArchUnitHexagonalTest {
                         "lombok..",
                         "org.springframework..");
 
+
         rule.check(importedClasses);
     }
 }
