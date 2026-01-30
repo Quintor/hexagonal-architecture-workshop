@@ -1,0 +1,25 @@
+package nl.quintor.workshop.order.infrastructure.adapters.outbound.persistence;
+
+import lombok.RequiredArgsConstructor;
+import nl.quintor.workshop.order.domain.model.Order;
+import nl.quintor.workshop.order.domain.repository.OrderRepository;
+import nl.quintor.workshop.order.infrastructure.adapters.outbound.persistence.mapper.OrderEntityMapper;
+import nl.quintor.workshop.order.infrastructure.adapters.outbound.persistence.spring.SpringDataOrderRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Repository
+public class JpaOrderRepository implements OrderRepository {
+    private final OrderEntityMapper orderEntityMapper;
+    private final SpringDataOrderRepository springDataOrderRepository;
+
+    @Override
+    public List<Order> findOrders() {
+        return springDataOrderRepository.findAll().stream()
+                .map(orderEntityMapper::toDomain)
+                .toList();
+    }
+
+}
