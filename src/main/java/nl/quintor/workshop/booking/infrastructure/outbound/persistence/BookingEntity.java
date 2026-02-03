@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.quintor.workshop.booking.domain.model.Customer;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +23,7 @@ public class BookingEntity {
     private long id;
 
     @Embedded
-    private Customer customer;
+    private CustomerEntity customer;
 
     private LocalDateTime dateTime;
 
