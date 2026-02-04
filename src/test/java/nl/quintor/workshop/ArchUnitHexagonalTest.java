@@ -12,19 +12,16 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 class ArchUnitHexagonalTest {
 
     @Test
-    void domain_should_not_depend_on_other_packages() {
+    void domain_models_should_not_depend_on_other_packages() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("nl.quintor.workshop.domain..")
-                .and()
-                .haveSimpleNameNotContaining("package-info")
+                .resideInAPackage("..model..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
-                        // Dit moet vgm vanwege lombok generated code
-                        "nl.quintor.workshop.domain..",
+                        "..model..",
                         "java..",
                         "lombok..");
 
@@ -32,59 +29,35 @@ class ArchUnitHexagonalTest {
     }
 
     @Test
-    void domainservice_should_only_depend_on_domain() {
+    void domain_service_should_only_depend_on_domain() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("nl.quintor.workshop.domain.service..")
-                .and()
-                .haveSimpleNameNotContaining("package-info")
+                .resideInAPackage("..service..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
-                        "nl.quintor.workshop.domain..",
-                        "java..");
-
-        rule.check(importedClasses);
-    }
-
-    @Test
-    void application_should_only_depend_on_domain() {
-        JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
-
-        ArchRule rule = classes()
-                .that()
-                .resideInAPackage("nl.quintor.workshop.application.service")
-                .and()
-                .haveSimpleNameNotContaining("package-info")
-                .should()
-                .onlyDependOnClassesThat()
-                .resideInAnyPackage(
-                        "nl.quintor.workshop.domain..",
+                        "..domain..",
                         "java..",
-                        "lombok..",
-                        "org.springframework..");
-
+                        "lombok..");
 
         rule.check(importedClasses);
     }
-
     @Test
-    void infrastructure_primairy_should_only_depend_on_application() {
+    void infrastructure_inbound_should_only_depend_on_itself_and_inwards() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("nl.quintor.workshop.infrastructure.adapters.inbound..")
-                .and()
-                .haveSimpleNameNotContaining("package-info")
+                .resideInAPackage("..inbound..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
-                        "nl.quintor.workshop.domain..",
-                        "nl.quintor.workshop.application..",
-                        "nl.quintor.workshop.infrastructure.adapters.inbound..",
+                "..domain..",
+                        "..inbound..",
+                        // TODO: overleggen of api een named interface in de infra layer wordt
+                        "..api..",
                         "java..",
                         "lombok..",
                         "org.mapstruct..",
@@ -96,28 +69,27 @@ class ArchUnitHexagonalTest {
     }
 
     @Test
-    void infrastructure_secondairy_should_only_depend_on_domain() {
+    void infrastructure_outbound_should_only_depend_on_itself_and_inwards() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("nl.quintor.workshop.infrastructure.adapters.outbound..")
-                .and()
-                .haveSimpleNameNotContaining("package-info")
+                .resideInAPackage("..outbound..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
-                        "nl.quintor.workshop.domain..",
+                        "..domain..",
+                        "..outbound..",
+                        // TODO: overleggen of api een named interface in de infra layer wordt
+                        "..api..",
                         "java..",
                         "lombok..",
                         "org.mapstruct..",
                         "org.slf4j..",
+                        "jakarta..",
                         "org.springframework..");
 
 
         rule.check(importedClasses);
     }
-
-
-
 }
