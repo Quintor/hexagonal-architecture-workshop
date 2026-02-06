@@ -53,12 +53,12 @@ Een adapter is een concrete implementatie van een port naar de buitenwereld. Ze 
 Zonder adapters zou je applicatie niet met databases, APIs of messaging systemen kunnen praten.
 
 ## infrastructure.adapters.inbound
-De inbound adapters (ook wel primairy genoemd) zijn de adapters voor inkomende triggers zoals een REST call of een Kafka event.
+De inbound adapters (ook wel primary genoemd) zijn de adapters voor inkomende triggers zoals een REST call of een Kafka event.
 Deze adapter is verantwoordelijk voor de techniek die nodig voor het ontvangen van het bericht en de vertaling 
 van de inhoud van het bericht naar het domein model.
 
 ## infrastructure.adapters.outbound
-De outbound adapters (ook wel secundairy genoemd) zijn de adapters voor uitgaand verkeer zoals een REST call of interactie
+De outbound adapters (ook wel secondary genoemd) zijn de adapters voor uitgaand verkeer zoals een REST call of interactie
 met een database.
 
 ## infrastructure.adapters.outbound.persistence
