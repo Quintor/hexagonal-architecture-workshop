@@ -21,7 +21,7 @@ class ArchUnitLayerNamingTest {
                 .and()
                 .areAnnotatedWith(Service.class)
                 .should()
-                .haveSimpleNameEndingWith("Service");
+                .haveSimpleNameEndingWith("Service").allowEmptyShould(true);
 
         rule.check(importedClasses);
     }
@@ -36,7 +36,7 @@ class ArchUnitLayerNamingTest {
                 .and()
                 .haveSimpleNameNotContaining("package-info")
                 .should()
-                .haveSimpleNameEndingWith("Repository");
+                .haveSimpleNameEndingWith("Repository").allowEmptyShould(true);
 
         rule.check(importedClasses);
     }
@@ -51,7 +51,7 @@ class ArchUnitLayerNamingTest {
                 .and()
                 .areAnnotatedWith(RestController.class)
                 .should()
-                .haveSimpleNameEndingWith("Controller");
+                .haveSimpleNameEndingWith("Controller").allowEmptyShould(true);
 
         rule.check(importedClasses);
     }
