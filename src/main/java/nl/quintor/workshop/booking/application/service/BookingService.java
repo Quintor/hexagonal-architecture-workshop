@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.domain.service;
+package nl.quintor.workshop.booking.application.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Booking;

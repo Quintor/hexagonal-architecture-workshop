@@ -3,7 +3,7 @@ package nl.quintor.workshop.customer.infrastructure;
 import nl.quintor.workshop.customer.api.CustomerPublicService;
 import nl.quintor.workshop.customer.infrastructure.inbound.services.CustomerPublicServiceImpl;
 import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
-import nl.quintor.workshop.customer.domain.service.CustomerService;
+import nl.quintor.workshop.customer.application.service.CustomerService;
 import nl.quintor.workshop.customer.infrastructure.outbound.persistence.CustomerEntityMapper;
 import nl.quintor.workshop.customer.infrastructure.outbound.persistence.CustomerRepositoryImpl;
 import nl.quintor.workshop.customer.infrastructure.outbound.persistence.SpringDataCustomerRepository;

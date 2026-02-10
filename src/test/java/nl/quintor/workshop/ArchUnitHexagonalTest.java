@@ -34,7 +34,24 @@ class ArchUnitHexagonalTest {
 
         ArchRule rule = classes()
                 .that()
-                .resideInAPackage("..service..")
+                .resideInAPackage("..domain.service..")
+                .should()
+                .onlyDependOnClassesThat()
+                .resideInAnyPackage(
+                        "..domain..",
+                        "java..",
+                        "lombok..");
+
+        rule.check(importedClasses);
+    }
+
+    @Test
+    void application__should_only_depend_on_domain() {
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
+
+        ArchRule rule = classes()
+                .that()
+                .resideInAPackage("..application..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
@@ -55,6 +72,7 @@ class ArchUnitHexagonalTest {
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
                 "..domain..",
+                        "..application..",
                         "..inbound..",
                         // TODO: overleggen of api een named interface in de infra layer wordt
                         "..api..",
@@ -79,6 +97,7 @@ class ArchUnitHexagonalTest {
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
                         "..domain..",
+                        "..application..",
                         "..outbound..",
                         // TODO: overleggen of api een named interface in de infra layer wordt
                         "..api..",

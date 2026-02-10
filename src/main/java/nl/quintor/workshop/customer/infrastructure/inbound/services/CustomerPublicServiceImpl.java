@@ -3,7 +3,7 @@ package nl.quintor.workshop.customer.infrastructure.inbound.services;
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.customer.api.CustomerDto;
 import nl.quintor.workshop.customer.api.CustomerPublicService;
-import nl.quintor.workshop.customer.domain.service.CustomerService;
+import nl.quintor.workshop.customer.application.service.CustomerService;
 
 @RequiredArgsConstructor
 public class CustomerPublicServiceImpl implements CustomerPublicService {

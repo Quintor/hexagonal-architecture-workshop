@@ -1,4 +1,4 @@
-package nl.quintor.workshop.customer.domain.service;
+package nl.quintor.workshop.customer.application.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.customer.domain.model.Customer;
