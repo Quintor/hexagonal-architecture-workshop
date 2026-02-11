@@ -1,5 +1,6 @@
-package nl.quintor.workshop.customer.infrastructure.outbound.persistence;
+package nl.quintor.workshop.booking.outbound.persistence;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,19 +10,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "CUSTOMERS")
-public class CustomerEntity {
+@Table(name = "BOOKINGS")
+public class BookingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String phoneNumber;
+    @Embedded
+    private CustomerEntity customer;
 
-    private String email;
+    private LocalDateTime dateTime;
+
+    private String fromLocation;
+
+    private String toLocation;
+
+    private byte numberOfPassengers;
 
     private String status;
 }
+

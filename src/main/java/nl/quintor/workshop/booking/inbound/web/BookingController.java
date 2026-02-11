@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.inbound.web;
+package nl.quintor.workshop.booking.inbound.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

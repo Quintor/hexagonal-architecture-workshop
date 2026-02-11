@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.inbound.web;
+package nl.quintor.workshop.booking.inbound.web;
 
 import nl.quintor.workshop.booking.domain.model.Customer;
 import org.mapstruct.Mapper;

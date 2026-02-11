@@ -1,12 +1,12 @@
-package nl.quintor.workshop.booking.infrastructure;
+package nl.quintor.workshop.booking.config;
 
 import nl.quintor.workshop.booking.domain.outbound.BookingRepository;
 import nl.quintor.workshop.booking.domain.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.application.service.BookingService;
-import nl.quintor.workshop.booking.infrastructure.outbound.persistence.BookingEntityMapper;
-import nl.quintor.workshop.booking.infrastructure.outbound.persistence.BookingRepositoryImpl;
-import nl.quintor.workshop.booking.infrastructure.outbound.persistence.SpringDataBookingRepository;
-import nl.quintor.workshop.booking.infrastructure.outbound.services.CustomerServiceClientAdapter;
+import nl.quintor.workshop.booking.outbound.persistence.BookingEntityMapper;
+import nl.quintor.workshop.booking.outbound.persistence.BookingRepositoryImpl;
+import nl.quintor.workshop.booking.outbound.persistence.SpringDataBookingRepository;
+import nl.quintor.workshop.booking.outbound.services.CustomerServiceClientAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

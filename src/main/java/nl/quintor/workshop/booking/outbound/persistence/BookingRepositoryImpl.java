@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.outbound.persistence;
+package nl.quintor.workshop.booking.outbound.persistence;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Booking;

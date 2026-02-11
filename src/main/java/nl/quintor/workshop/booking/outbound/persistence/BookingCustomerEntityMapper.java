@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.outbound.persistence;
+package nl.quintor.workshop.booking.outbound.persistence;
 
 import nl.quintor.workshop.booking.domain.model.Customer;
 import org.mapstruct.Mapper;

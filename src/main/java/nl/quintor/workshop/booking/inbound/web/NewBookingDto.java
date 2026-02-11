@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.inbound.web;
+package nl.quintor.workshop.booking.inbound.web;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package nl.quintor.workshop.customer.infrastructure.outbound.persistence;
+package nl.quintor.workshop.customer.outbound.persistence;
 
 import nl.quintor.workshop.customer.domain.model.Customer;
 import nl.quintor.workshop.customer.domain.model.CustomerStatus;

@@ -1,11 +1,11 @@
-package nl.quintor.workshop.customer.infrastructure;
+package nl.quintor.workshop.customer.config;
 
 import nl.quintor.workshop.customer.domain.inbound.CustomerService;
 import nl.quintor.workshop.customer.domain.service.CustomerServiceImpl;
 import nl.quintor.workshop.customer.domain.outbound.CustomerRepository;
-import nl.quintor.workshop.customer.infrastructure.outbound.persistence.CustomerEntityMapper;
-import nl.quintor.workshop.customer.infrastructure.outbound.persistence.CustomerRepositoryImpl;
-import nl.quintor.workshop.customer.infrastructure.outbound.persistence.SpringDataCustomerRepository;
+import nl.quintor.workshop.customer.outbound.persistence.CustomerEntityMapper;
+import nl.quintor.workshop.customer.outbound.persistence.CustomerRepositoryImpl;
+import nl.quintor.workshop.customer.outbound.persistence.SpringDataCustomerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

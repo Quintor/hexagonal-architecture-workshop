@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.outbound.services;
+package nl.quintor.workshop.booking.outbound.services;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Customer;

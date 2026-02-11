@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.infrastructure.outbound.persistence;
+package nl.quintor.workshop.booking.outbound.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
