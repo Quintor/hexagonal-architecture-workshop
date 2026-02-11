@@ -5,11 +5,9 @@ import nl.quintor.workshop.booking.domain.outbound.GetOrCreateCustomerResponse;
 import nl.quintor.workshop.customer.domain.inbound.GetOrCreateCustomerCommand;
 import nl.quintor.workshop.customer.domain.inbound.GetOrCreateCustomerReply;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface CustomerInternalMapper {
-    CustomerInternalMapper INSTANCE = Mappers.getMapper(CustomerInternalMapper.class);
 
     GetOrCreateCustomerCommand toCommand(GetOrCreateCustomerRequest request);
 

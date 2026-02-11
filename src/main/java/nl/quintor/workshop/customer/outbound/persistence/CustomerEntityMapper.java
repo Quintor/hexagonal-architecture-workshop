@@ -3,7 +3,6 @@ package nl.quintor.workshop.customer.outbound.persistence;
 import nl.quintor.workshop.customer.domain.model.Customer;
 import nl.quintor.workshop.customer.domain.model.CustomerStatus;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface CustomerEntityMapper {

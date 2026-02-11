@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import nl.quintor.workshop.booking.domain.inbound.BookingService;
 import nl.quintor.workshop.booking.domain.inbound.NewBookingCommand;
 import nl.quintor.workshop.booking.domain.inbound.NewBookingReply;
-import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.service.BookingServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
