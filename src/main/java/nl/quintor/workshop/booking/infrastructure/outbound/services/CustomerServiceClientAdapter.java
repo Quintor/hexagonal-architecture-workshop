@@ -3,14 +3,14 @@ package nl.quintor.workshop.booking.infrastructure.outbound.services;
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Customer;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
-import nl.quintor.workshop.customer.api.CustomerDto;
-import nl.quintor.workshop.customer.api.CustomerPublicService;
+import nl.quintor.workshop.customer.domain.inbound.CustomerDto;
+import nl.quintor.workshop.customer.domain.inbound.CustomerService;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CustomerServiceClientAdapter implements CustomerServiceClient {
-    private final CustomerPublicService customerPublicService;
+    private final CustomerService customerPublicService;
     private final ExternalCustomerDtoMapper externalCustomerDtoMapper;
 
     @Override

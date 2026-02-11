@@ -1,9 +1,8 @@
 package nl.quintor.workshop.customer.infrastructure;
 
-import nl.quintor.workshop.customer.api.CustomerPublicService;
-import nl.quintor.workshop.customer.infrastructure.inbound.services.CustomerPublicServiceImpl;
+import nl.quintor.workshop.customer.domain.inbound.CustomerService;
+import nl.quintor.workshop.customer.domain.service.CustomerServiceImpl;
 import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
-import nl.quintor.workshop.customer.application.service.CustomerService;
 import nl.quintor.workshop.customer.infrastructure.outbound.persistence.CustomerEntityMapper;
 import nl.quintor.workshop.customer.infrastructure.outbound.persistence.CustomerRepositoryImpl;
 import nl.quintor.workshop.customer.infrastructure.outbound.persistence.SpringDataCustomerRepository;
@@ -26,12 +25,12 @@ public class CustomerModuleConfiguration {
     }
 
     @Bean
-    public CustomerService customerService(CustomerRepository customerRepository) {
-        return new CustomerService(customerRepository);
+    public nl.quintor.workshop.customer.application.service.CustomerService customerService(CustomerRepository customerRepository) {
+        return new nl.quintor.workshop.customer.application.service.CustomerService(customerRepository);
     }
 
     @Bean
-    public CustomerPublicService customerPublicService(CustomerService customerService) {
-        return new CustomerPublicServiceImpl(customerService);
+    public CustomerService customerPublicService(nl.quintor.workshop.customer.application.service.CustomerService customerService) {
+        return new CustomerServiceImpl(customerService);
     }
 }

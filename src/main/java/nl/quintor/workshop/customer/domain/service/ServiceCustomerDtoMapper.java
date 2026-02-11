@@ -1,6 +1,6 @@
-package nl.quintor.workshop.customer.infrastructure.inbound.services;
+package nl.quintor.workshop.customer.domain.service;
 
-import nl.quintor.workshop.customer.api.CustomerDto;
+import nl.quintor.workshop.customer.domain.inbound.CustomerDto;
 import nl.quintor.workshop.customer.domain.model.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

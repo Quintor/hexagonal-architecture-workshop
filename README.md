@@ -1,3 +1,6 @@
+# Let op: verwijder de /target folder als je nieuwe versies binnenhaalt op je PC indien er errors zijn m.b.t. naming conflicts tussen oude en nieuwe versies van de Lombok impl classes
+
+
 # Hexagonal Architecture Workshop
 Deze repository bevat alle documentatie en code voor het kunnen geven van een workshop met als onderwerp Hexagonal
 Architecture.
