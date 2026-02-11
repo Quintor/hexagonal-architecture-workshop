@@ -2,7 +2,7 @@ package nl.quintor.workshop.customer.infrastructure.outbound.persistence;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.customer.domain.model.Customer;
-import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
+import nl.quintor.workshop.customer.domain.outbound.CustomerRepository;
 
 import java.util.Optional;
 

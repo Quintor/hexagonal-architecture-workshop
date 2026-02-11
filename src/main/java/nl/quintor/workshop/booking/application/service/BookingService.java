@@ -2,8 +2,8 @@ package nl.quintor.workshop.booking.application.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
-import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
+import nl.quintor.workshop.booking.domain.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.outbound.CustomerServiceClient;
 
 @RequiredArgsConstructor
 public class BookingService {

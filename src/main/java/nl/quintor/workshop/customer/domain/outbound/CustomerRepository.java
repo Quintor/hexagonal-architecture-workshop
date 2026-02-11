@@ -1,4 +1,4 @@
-package nl.quintor.workshop.customer.domain.port.outbound;
+package nl.quintor.workshop.customer.domain.outbound;
 
 import nl.quintor.workshop.customer.domain.model.Customer;
 import java.util.Optional;

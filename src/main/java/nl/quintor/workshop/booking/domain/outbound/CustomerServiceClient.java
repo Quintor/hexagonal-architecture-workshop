@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.domain.port.outbound;
+package nl.quintor.workshop.booking.domain.outbound;
 
 import nl.quintor.workshop.booking.domain.model.Customer;
 

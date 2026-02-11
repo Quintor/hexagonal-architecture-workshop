@@ -2,7 +2,7 @@ package nl.quintor.workshop.booking.infrastructure.outbound.persistence;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.outbound.BookingRepository;
 
 @RequiredArgsConstructor
 public class BookingRepositoryImpl implements BookingRepository {

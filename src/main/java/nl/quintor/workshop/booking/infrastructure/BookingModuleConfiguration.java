@@ -1,7 +1,7 @@
 package nl.quintor.workshop.booking.infrastructure;
 
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
-import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
+import nl.quintor.workshop.booking.domain.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.application.service.BookingService;
 import nl.quintor.workshop.booking.infrastructure.outbound.persistence.BookingEntityMapper;
 import nl.quintor.workshop.booking.infrastructure.outbound.persistence.BookingRepositoryImpl;
