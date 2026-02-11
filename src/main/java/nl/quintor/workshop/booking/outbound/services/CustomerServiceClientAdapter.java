@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CustomerServiceClientAdapter implements CustomerServiceClient {
-    private final CustomerService customerPublicService;
+    private final CustomerService customerService;
     private final ExternalCustomerDtoMapper externalCustomerDtoMapper;
 
     @Override
     public void validateOrCreateCustomer(Customer customer) {
         CustomerDto customerDto = externalCustomerDtoMapper.toDTO(customer);
-        customerPublicService.validateOrCreateCustomer(customerDto);
+        customerService.validateOrCreateCustomer(customerDto);
     }
 }

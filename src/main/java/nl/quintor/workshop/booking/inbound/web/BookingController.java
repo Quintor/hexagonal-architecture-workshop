@@ -3,7 +3,7 @@ package nl.quintor.workshop.booking.inbound.web;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.application.service.BookingService;
+import nl.quintor.workshop.booking.domain.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

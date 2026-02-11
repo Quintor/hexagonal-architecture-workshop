@@ -25,12 +25,7 @@ public class CustomerModuleConfiguration {
     }
 
     @Bean
-    public nl.quintor.workshop.customer.application.service.CustomerService customerService(CustomerRepository customerRepository) {
-        return new nl.quintor.workshop.customer.application.service.CustomerService(customerRepository);
-    }
-
-    @Bean
-    public CustomerService customerPublicService(nl.quintor.workshop.customer.application.service.CustomerService customerService) {
-        return new CustomerServiceImpl(customerService);
+    public CustomerService customerService(CustomerRepository customerRepository) {
+        return new CustomerServiceImpl(customerRepository);
     }
 }

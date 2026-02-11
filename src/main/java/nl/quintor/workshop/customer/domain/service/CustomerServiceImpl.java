@@ -3,13 +3,17 @@ package nl.quintor.workshop.customer.domain.service;
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.customer.domain.inbound.CustomerDto;
 import nl.quintor.workshop.customer.domain.inbound.CustomerService;
+import nl.quintor.workshop.customer.domain.outbound.CustomerRepository;
 
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-    private final nl.quintor.workshop.customer.application.service.CustomerService customerService;
+    private final CustomerRepository customerRepository;
+
 
     @Override
     public void validateOrCreateCustomer(CustomerDto customerDTO) {
-        customerService.validateOrCreateCustomer(ServiceCustomerDtoMapper.INSTANCE.toDomain(customerDTO));
+        var customer = ServiceCustomerDtoMapper.INSTANCE.toDomain(customerDTO);
+        customerRepository.findById(String.valueOf(customer.getId()))
+                .orElseGet(() -> customerRepository.save(customer));
     }
 }
