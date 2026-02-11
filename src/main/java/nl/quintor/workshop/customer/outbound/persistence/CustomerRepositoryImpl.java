@@ -11,25 +11,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     private final CustomerEntityMapper customerEntityMapper;
     private final SpringDataCustomerRepository springDataCustomerRepository;
 
-    @Override
-    public boolean existsById(String customerId) {
-        try {
-            Long id = Long.parseLong(customerId);
-            return springDataCustomerRepository.existsById(id);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 
     @Override
-    public Optional<Customer> findById(String customerId) {
-        try {
-            Long id = Long.parseLong(customerId);
-            return springDataCustomerRepository.findById(id)
-                    .map(customerEntityMapper::toDomain);
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
+    public Optional<Customer> findByEmail(String email) {
+        return springDataCustomerRepository.findByEmail(email)
+                .map(customerEntityMapper::toDomain);
     }
 
     @Override

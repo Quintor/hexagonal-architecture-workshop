@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Customer {
     long id;
-    String phoneNumber;
     String email;
+    String phoneNumber;
+
+    @Builder.Default
     CustomerStatus status = CustomerStatus.ACTIVE;
 }
 

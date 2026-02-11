@@ -1,7 +1,7 @@
 package nl.quintor.workshop.booking.domain.outbound;
 
-import nl.quintor.workshop.booking.domain.model.Customer;
+import nl.quintor.workshop.customer.domain.model.Customer;
 
 public interface CustomerServiceClient {
-    void validateOrCreateCustomer(Customer customer);
+    GetOrCreateCustomerResponse GetOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest);
 }

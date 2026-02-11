@@ -4,9 +4,7 @@ import nl.quintor.workshop.customer.domain.model.Customer;
 import java.util.Optional;
 
 public interface CustomerRepository {
-    boolean existsById(String customerId);
-
-    Optional<Customer> findById(String customerId);
+    Optional<Customer> findByEmail(String email);
 
     Customer save(Customer customer);
 }

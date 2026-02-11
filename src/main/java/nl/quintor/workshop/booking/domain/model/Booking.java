@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Booking {
-    Customer customer;
+    long id;
+    long customerId;
     LocalDateTime dateTime;
     String fromLocation;
     String toLocation;
