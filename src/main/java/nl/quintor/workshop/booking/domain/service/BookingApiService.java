@@ -8,6 +8,7 @@ import nl.quintor.workshop.booking.domain.model.Booking;
 import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class BookingApiService implements BookingApiPort {
@@ -17,6 +18,7 @@ public class BookingApiService implements BookingApiPort {
 
 
     @Override
+    @Transactional
     public NewBookingReply newBooking(NewBookingCommand command) {
         var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerEmail(), command.customerPhoneNumber());
         var customerServiceResponse = customerServiceClient.getOrCreateCustomer(customerServiceRequest);

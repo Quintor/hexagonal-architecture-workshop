@@ -1,5 +1,6 @@
 package nl.quintor.workshop.customer.domain.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.customer.domain.port.inbound.CustomerApiPort;
 import nl.quintor.workshop.customer.domain.port.inbound.GetOrCreateCustomerCommand;
@@ -12,6 +13,7 @@ public class CustomerApiService implements CustomerApiPort {
     private final CustomerRepositorySpiPort customerRepositorySpiPort;
 
     @Override
+    @Transactional
     public GetOrCreateCustomerReply getOrCreateCustomer(GetOrCreateCustomerCommand command) {
         System.out.println("Got email: " + command.email());
         var customer = customerRepositorySpiPort.findByEmail(command.email())
