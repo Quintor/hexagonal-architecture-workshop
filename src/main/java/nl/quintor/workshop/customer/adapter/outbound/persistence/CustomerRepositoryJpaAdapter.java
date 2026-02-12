@@ -2,14 +2,14 @@ package nl.quintor.workshop.customer.adapter.outbound.persistence;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.customer.domain.model.Customer;
-import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
+import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepositorySpiPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomerRepositoryImpl implements CustomerRepository {
+public class CustomerRepositoryJpaAdapter implements CustomerRepositorySpiPort {
     private final CustomerEntityMapper customerEntityMapper;
     private final SpringDataCustomerRepository springDataCustomerRepository;
 

@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerResponse;
-import nl.quintor.workshop.customer.domain.port.inbound.CustomerService;
+import nl.quintor.workshop.customer.domain.port.inbound.CustomerApiPort;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CustomerInternalServiceAdapter implements CustomerServiceClient {
-    private final CustomerService customerService;
+    private final CustomerApiPort customerApiPort;
     private final CustomerInternalMapper customerInternalMapper;
 
     @Override
-    public GetOrCreateCustomerResponse GetOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest) {
+    public GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest) {
         var command = customerInternalMapper.toCommand(getOrCreateCustomerRequest);
-        var reply = customerService.GetOrCreateCustomer(command);
+        var reply = customerApiPort.getOrCreateCustomer(command);
 
         return customerInternalMapper.fromReply(reply);
     }

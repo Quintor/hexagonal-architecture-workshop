@@ -1,17 +1,17 @@
 package nl.quintor.workshop.booking.domain.service;
 
 import lombok.RequiredArgsConstructor;
-import nl.quintor.workshop.booking.domain.port.inbound.BookingService;
+import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingReply;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 
 @RequiredArgsConstructor
-public class BookingServiceImpl implements BookingService {
-    private final BookingRepository bookingRepository;
+public class BookingApiService implements BookingApiPort {
+    private final BookingRepositorySpiPort bookingRepositorySpiPort;
     private final CustomerServiceClient customerServiceClient;
     private final BookingMapper bookingMapper;
 
@@ -19,7 +19,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public NewBookingReply newBooking(NewBookingCommand command) {
         var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerEmail(), command.customerPhoneNumber());
-        var customerServiceResponse = customerServiceClient.GetOrCreateCustomer(customerServiceRequest);
+        var customerServiceResponse = customerServiceClient.getOrCreateCustomer(customerServiceRequest);
 
         var booking = Booking.builder()
                 .customerId(customerServiceResponse.customerId())
@@ -29,7 +29,7 @@ public class BookingServiceImpl implements BookingService {
                 .numberOfPassengers(command.numberOfPassengers())
                 .build();
 
-        var savedBooking = bookingRepository.save(booking);
+        var savedBooking = bookingRepositorySpiPort.save(booking);
         return bookingMapper.toNewBookingReply(savedBooking);
     }
 }

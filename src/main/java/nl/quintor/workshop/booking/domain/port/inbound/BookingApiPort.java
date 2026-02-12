@@ -1,5 +1,5 @@
 package nl.quintor.workshop.booking.domain.port.inbound;
 
-public interface BookingService {
+public interface BookingApiPort {
     NewBookingReply newBooking(NewBookingCommand command);
 }

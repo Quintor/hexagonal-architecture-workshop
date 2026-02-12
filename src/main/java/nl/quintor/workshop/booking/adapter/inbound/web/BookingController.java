@@ -2,7 +2,7 @@ package nl.quintor.workshop.booking.adapter.inbound.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.quintor.workshop.booking.domain.port.inbound.BookingService;
+import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingReply;
 import org.springframework.http.HttpStatus;
@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("bookings")
 @RequiredArgsConstructor
 public class BookingController {
-    private final BookingService bookingService;
+    private final BookingApiPort bookingApiPort;
 
     @PostMapping
     public ResponseEntity<NewBookingReply> createNewBooking(@RequestBody NewBookingCommand newBookingCommand) {
-        var createdBooking = bookingService.newBooking(newBookingCommand);
+        var createdBooking = bookingApiPort.newBooking(newBookingCommand);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
     }
