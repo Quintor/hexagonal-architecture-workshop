@@ -7,14 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Booking {
-    long id;
-    long customerId;
+    UUID id;
+    UUID customerId;
     LocalDateTime dateTime;
     String fromLocation;
     String toLocation;

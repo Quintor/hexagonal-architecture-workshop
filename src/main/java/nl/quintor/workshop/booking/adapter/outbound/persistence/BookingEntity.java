@@ -2,13 +2,13 @@ package nl.quintor.workshop.booking.adapter.outbound.persistence;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @Entity
 public class BookingEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue
+    private UUID id;
 
-    private long customerId;
+    private UUID customerId;
 
     private LocalDateTime dateTime;
 

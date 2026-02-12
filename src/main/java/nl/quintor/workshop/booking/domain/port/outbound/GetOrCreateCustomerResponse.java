@@ -1,4 +1,6 @@
 package nl.quintor.workshop.booking.domain.port.outbound;
 
-public record GetOrCreateCustomerResponse(Long customerId) {
+import java.util.UUID;
+
+public record GetOrCreateCustomerResponse(UUID customerId) {
 }
