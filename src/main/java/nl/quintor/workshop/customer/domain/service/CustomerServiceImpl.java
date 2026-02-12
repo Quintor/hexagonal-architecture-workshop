@@ -1,11 +1,11 @@
 package nl.quintor.workshop.customer.domain.service;
 
 import lombok.RequiredArgsConstructor;
-import nl.quintor.workshop.customer.domain.inbound.CustomerService;
-import nl.quintor.workshop.customer.domain.inbound.GetOrCreateCustomerCommand;
-import nl.quintor.workshop.customer.domain.inbound.GetOrCreateCustomerReply;
+import nl.quintor.workshop.customer.domain.port.inbound.CustomerService;
+import nl.quintor.workshop.customer.domain.port.inbound.GetOrCreateCustomerCommand;
+import nl.quintor.workshop.customer.domain.port.inbound.GetOrCreateCustomerReply;
 import nl.quintor.workshop.customer.domain.model.Customer;
-import nl.quintor.workshop.customer.domain.outbound.CustomerRepository;
+import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
 
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {

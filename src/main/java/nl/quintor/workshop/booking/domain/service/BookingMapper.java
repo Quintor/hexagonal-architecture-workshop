@@ -1,6 +1,6 @@
 package nl.quintor.workshop.booking.domain.service;
 
-import nl.quintor.workshop.booking.domain.inbound.NewBookingReply;
+import nl.quintor.workshop.booking.domain.port.inbound.NewBookingReply;
 import nl.quintor.workshop.booking.domain.model.Booking;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

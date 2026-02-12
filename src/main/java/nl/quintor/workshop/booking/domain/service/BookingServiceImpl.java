@@ -1,13 +1,13 @@
 package nl.quintor.workshop.booking.domain.service;
 
 import lombok.RequiredArgsConstructor;
-import nl.quintor.workshop.booking.domain.inbound.BookingService;
-import nl.quintor.workshop.booking.domain.inbound.NewBookingCommand;
-import nl.quintor.workshop.booking.domain.inbound.NewBookingReply;
+import nl.quintor.workshop.booking.domain.port.inbound.BookingService;
+import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
+import nl.quintor.workshop.booking.domain.port.inbound.NewBookingReply;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.outbound.BookingRepository;
-import nl.quintor.workshop.booking.domain.outbound.CustomerServiceClient;
-import nl.quintor.workshop.booking.domain.outbound.GetOrCreateCustomerRequest;
+import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
+import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
