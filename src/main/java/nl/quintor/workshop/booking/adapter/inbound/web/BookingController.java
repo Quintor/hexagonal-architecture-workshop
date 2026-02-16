@@ -1,10 +1,11 @@
 package nl.quintor.workshop.booking.adapter.inbound.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.quintor.workshop.booking.domain.model.Booking;
 import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
-import nl.quintor.workshop.booking.domain.port.inbound.NewBookingReply;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +21,25 @@ public class BookingController {
     private final BookingApiPort bookingApiPort;
 
     @PostMapping
-    public ResponseEntity<NewBookingReply> createNewBooking(@RequestBody NewBookingCommand newBookingCommand) {
-        var createdBooking = bookingApiPort.newBooking(newBookingCommand);
+    public ResponseEntity<BookingResponseDto> createNewBooking(@Valid @RequestBody BookingPostDto bookingPostDto) {
+        var newBookingCommand = new NewBookingCommand(
+                bookingPostDto.getCustomerPhoneNumber(),
+                bookingPostDto.getDateTime(),
+                bookingPostDto.getFromLocation(),
+                bookingPostDto.getToLocation(),
+                bookingPostDto.getNumberOfPassengers());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
+        Booking createdBooking = bookingApiPort.newBooking(newBookingCommand);
+
+        var responseDto = new BookingResponseDto(
+                createdBooking.getId(),
+                createdBooking.getCustomerId(),
+                createdBooking.getDateTime(),
+                createdBooking.getFromLocation(),
+                createdBooking.getToLocation(),
+                createdBooking.getNumberOfPassengers(),
+                createdBooking.getStatus());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 }

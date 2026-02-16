@@ -4,7 +4,6 @@ import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
 import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.domain.service.BookingApiService;
-import nl.quintor.workshop.booking.domain.service.BookingMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +12,7 @@ public class BookingModuleConfiguration {
     @Bean
     public BookingApiPort bookingService(
             BookingRepositorySpiPort bookingRepositorySpiPort,
-            CustomerServiceClient customerServiceClient, BookingMapper bookingMapper) {
-        return new BookingApiService(bookingRepositorySpiPort, customerServiceClient, bookingMapper);
+            CustomerServiceClient customerServiceClient) {
+        return new BookingApiService(bookingRepositorySpiPort, customerServiceClient);
     }
 }
