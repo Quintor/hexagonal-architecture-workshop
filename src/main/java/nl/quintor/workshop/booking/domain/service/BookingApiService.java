@@ -1,10 +1,10 @@
 package nl.quintor.workshop.booking.domain.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import nl.quintor.workshop.booking.domain.exception.InvalidBookingLocationException;
+import nl.quintor.workshop.booking.domain.model.Booking;
 import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
-import nl.quintor.workshop.booking.domain.model.Booking;
 import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
@@ -20,6 +20,8 @@ public class BookingApiService implements BookingApiPort {
     @Override
     @Transactional
     public Booking newBooking(NewBookingCommand command) {
+        validateBookingLocations(command);
+
         var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerPhoneNumber());
         var customerServiceResponse = customerServiceClient.getOrCreateCustomer(customerServiceRequest);
 
@@ -32,5 +34,11 @@ public class BookingApiService implements BookingApiPort {
                 .build();
 
         return bookingRepositorySpiPort.save(booking);
+    }
+
+    private void validateBookingLocations(NewBookingCommand command) {
+        if (command.fromLocation().equals(command.toLocation())) {
+            throw new InvalidBookingLocationException("From location cannot be the same as to location");
+        }
     }
 }
