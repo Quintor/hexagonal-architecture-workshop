@@ -1,5 +1,6 @@
 package nl.quintor.workshop.common.adapter.inbound.web;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,12 +27,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<List<ErrorResponseDto>> handleIllegalArgument(
-            IllegalArgumentException ex) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<List<ErrorResponseDto>> handleConstraintViolation(
+            ConstraintViolationException ex) {
 
-        List<ErrorResponseDto> errors = List.of(
-                new ErrorResponseDto("error", ex.getMessage()));
+        List<ErrorResponseDto> errors = ex.getConstraintViolations()
+                .stream()
+                .map(violation -> new ErrorResponseDto(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage()))
+                .collect(Collectors.toList());
 
         return ResponseEntity.badRequest().body(errors);
     }

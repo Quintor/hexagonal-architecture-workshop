@@ -23,11 +23,11 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<BookingResponseDto> createNewBooking(@Valid @RequestBody BookingPostDto bookingPostDto) {
         var newBookingCommand = new NewBookingCommand(
-                bookingPostDto.getCustomerPhoneNumber(),
-                bookingPostDto.getDateTime(),
-                bookingPostDto.getFromLocation(),
-                bookingPostDto.getToLocation(),
-                bookingPostDto.getNumberOfPassengers());
+                bookingPostDto.customerPhoneNumber(),
+                bookingPostDto.dateTime(),
+                bookingPostDto.fromLocation(),
+                bookingPostDto.toLocation(),
+                bookingPostDto.numberOfPassengers());
 
         Booking createdBooking = bookingApiPort.newBooking(newBookingCommand);
 
