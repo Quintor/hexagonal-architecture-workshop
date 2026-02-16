@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface SpringDataCustomerRepository extends JpaRepository<CustomerEntity, Long> {
-    Optional<CustomerEntity> findByEmail(String email);
+    Optional<CustomerEntity> findByPhoneNumber(String phoneNumber);
 
 }

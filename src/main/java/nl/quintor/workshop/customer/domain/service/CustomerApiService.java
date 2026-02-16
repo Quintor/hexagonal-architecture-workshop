@@ -15,11 +15,10 @@ public class CustomerApiService implements CustomerApiPort {
     @Override
     @Transactional
     public GetOrCreateCustomerReply getOrCreateCustomer(GetOrCreateCustomerCommand command) {
-        System.out.println("Got email: " + command.email());
-        var customer = customerRepositorySpiPort.findByEmail(command.email())
+        System.out.println("Phone number: " + command.phoneNumber());
+        var customer = customerRepositorySpiPort.findByPhoneNumber(command.phoneNumber())
                 .orElseGet(() -> customerRepositorySpiPort.save(Customer.builder()
                         .phoneNumber(command.phoneNumber())
-                        .email(command.email())
                         .build()));
 
         return new GetOrCreateCustomerReply(customer.getId());

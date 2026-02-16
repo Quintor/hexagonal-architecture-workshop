@@ -4,7 +4,7 @@ import nl.quintor.workshop.customer.domain.model.Customer;
 import java.util.Optional;
 
 public interface CustomerRepositorySpiPort {
-    Optional<Customer> findByEmail(String email);
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
 
     Customer save(Customer customer);
 }

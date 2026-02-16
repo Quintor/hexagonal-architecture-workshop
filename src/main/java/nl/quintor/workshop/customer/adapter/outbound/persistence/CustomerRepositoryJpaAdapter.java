@@ -15,8 +15,8 @@ public class CustomerRepositoryJpaAdapter implements CustomerRepositorySpiPort {
 
 
     @Override
-    public Optional<Customer> findByEmail(String email) {
-        return springDataCustomerRepository.findByEmail(email)
+    public Optional<Customer> findByPhoneNumber(String phoneNumber) {
+        return springDataCustomerRepository.findByPhoneNumber(phoneNumber)
                 .map(customerEntityMapper::toDomain);
     }
 
