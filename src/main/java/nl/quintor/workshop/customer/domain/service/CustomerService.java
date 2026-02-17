@@ -7,7 +7,9 @@ import nl.quintor.workshop.customer.domain.port.inbound.GetOrCreateCustomerReply
 import nl.quintor.workshop.customer.domain.model.Customer;
 import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+@Validated
 @RequiredArgsConstructor
 public class CustomerService implements CustomerApi {
     private final CustomerRepository customerRepository;
