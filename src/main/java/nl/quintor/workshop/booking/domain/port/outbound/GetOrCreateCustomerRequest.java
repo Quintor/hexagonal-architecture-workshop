@@ -1,0 +1,4 @@
+package nl.quintor.workshop.booking.domain.port.outbound;
+
+public record GetOrCreateCustomerRequest(String phoneNumber) {
+}

@@ -3,17 +3,17 @@ package nl.quintor.workshop.booking.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Data
-@NoArgsConstructor
+@Value
 @AllArgsConstructor
 @Builder
 public class Booking {
-    Customer customer;
+    UUID id;
+    UUID customerId;
     LocalDateTime dateTime;
     String fromLocation;
     String toLocation;

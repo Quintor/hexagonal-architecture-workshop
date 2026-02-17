@@ -1,18 +1,18 @@
 package nl.quintor.workshop.customer.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
+import java.util.UUID;
+
+@Value
 @AllArgsConstructor
 @Builder
 public class Customer {
-    long id;
-    String phoneNumber;
+    UUID id;
     String email;
+    String phoneNumber;
+
+    @Builder.Default
     CustomerStatus status = CustomerStatus.ACTIVE;
 }
 

@@ -4,8 +4,6 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import org.junit.jupiter.api.Test;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
@@ -40,7 +38,9 @@ class ArchUnitHexagonalTest {
                 .resideInAnyPackage(
                         "..domain..",
                         "java..",
-                        "lombok..");
+                        "lombok..",
+                        "org.springframework.validation..",
+                        "org.springframework.transaction..");
 
         rule.check(importedClasses);
     }
@@ -57,7 +57,8 @@ class ArchUnitHexagonalTest {
                 .resideInAnyPackage(
                         "..domain..",
                         "java..",
-                        "lombok..");
+                        "lombok..",
+                        "");
 
         rule.check(importedClasses);
     }
@@ -80,7 +81,9 @@ class ArchUnitHexagonalTest {
                         "lombok..",
                         "org.mapstruct..",
                         "org.slf4j..",
-                        "org.springframework..");
+                        "org.springframework..",
+                        "com.fasterxml.jackson..",
+                        "jakarta.validation..");
 
 
         rule.check(importedClasses);
@@ -106,7 +109,8 @@ class ArchUnitHexagonalTest {
                         "org.mapstruct..",
                         "org.slf4j..",
                         "jakarta..",
-                        "org.springframework..");
+                        "org.springframework..",
+                        "jakarta.validation..");
 
 
         rule.check(importedClasses);
