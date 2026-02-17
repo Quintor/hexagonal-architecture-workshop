@@ -2,6 +2,7 @@ package nl.quintor.workshop.common.adapter.inbound.web;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import nl.quintor.workshop.common.domain.exception.DomainValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -49,5 +50,10 @@ public class GlobalExceptionHandler {
         ErrorResponseDto error = new ErrorResponseDto("error", "An unexpected error occurred");
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(DomainValidationException.class)
+    public ResponseEntity<String> handleInvalidDomainException (DomainValidationException ex) {
+        return ResponseEntity.unprocessableContent().body(ex.getMessage());
     }
 }
