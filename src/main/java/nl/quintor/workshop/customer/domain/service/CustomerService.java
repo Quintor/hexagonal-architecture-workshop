@@ -8,6 +8,7 @@ import nl.quintor.workshop.customer.domain.model.Customer;
 import nl.quintor.workshop.customer.domain.port.outbound.CustomerRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import java.util.List;
 
 @Validated
 @RequiredArgsConstructor
@@ -24,5 +25,11 @@ public class CustomerService implements CustomerApi {
                         .build()));
 
         return new GetOrCreateCustomerReply(customer.getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
     }
 }
