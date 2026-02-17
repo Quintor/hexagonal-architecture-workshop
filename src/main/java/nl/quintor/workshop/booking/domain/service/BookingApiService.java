@@ -1,13 +1,13 @@
 package nl.quintor.workshop.booking.domain.service;
 
 import lombok.RequiredArgsConstructor;
-import nl.quintor.workshop.booking.domain.exception.InvalidBookingLocationException;
 import nl.quintor.workshop.booking.domain.model.Booking;
 import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
 import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
+import nl.quintor.workshop.common.domain.exception.DomainValidationException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
@@ -38,7 +38,7 @@ public class BookingApiService implements BookingApiPort {
 
     private void validateBookingLocations(NewBookingCommand command) {
         if (command.fromLocation().equals(command.toLocation())) {
-            throw new InvalidBookingLocationException("From location cannot be the same as to location");
+            throw new DomainValidationException("From location cannot be the same as to location");
         }
     }
 }
