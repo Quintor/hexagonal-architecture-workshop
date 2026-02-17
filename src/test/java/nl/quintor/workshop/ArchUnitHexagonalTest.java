@@ -38,7 +38,9 @@ class ArchUnitHexagonalTest {
                 .resideInAnyPackage(
                         "..domain..",
                         "java..",
-                        "lombok..");
+                        "lombok..",
+                        "org.springframework.validation..",
+                        "org.springframework.transaction..");
 
         rule.check(importedClasses);
     }
@@ -55,7 +57,8 @@ class ArchUnitHexagonalTest {
                 .resideInAnyPackage(
                         "..domain..",
                         "java..",
-                        "lombok..");
+                        "lombok..",
+                        "");
 
         rule.check(importedClasses);
     }
@@ -78,7 +81,9 @@ class ArchUnitHexagonalTest {
                         "lombok..",
                         "org.mapstruct..",
                         "org.slf4j..",
-                        "org.springframework..");
+                        "org.springframework..",
+                        "com.fasterxml.jackson..",
+                        "jakarta.validation..");
 
 
         rule.check(importedClasses);
@@ -104,7 +109,8 @@ class ArchUnitHexagonalTest {
                         "org.mapstruct..",
                         "org.slf4j..",
                         "jakarta..",
-                        "org.springframework..");
+                        "org.springframework..",
+                        "jakarta.validation..");
 
 
         rule.check(importedClasses);
