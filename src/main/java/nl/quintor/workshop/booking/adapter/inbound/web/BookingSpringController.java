@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
+import nl.quintor.workshop.booking.domain.port.inbound.BookingApi;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("bookings")
 @RequiredArgsConstructor
-public class BookingController {
-    private final BookingApiPort bookingApiPort;
+public class BookingSpringController {
+    private final BookingApi bookingApi;
 
     @PostMapping
     public ResponseEntity<BookingResponseDto> createNewBooking(@Valid @RequestBody BookingPostDto bookingPostDto) {
@@ -29,7 +29,7 @@ public class BookingController {
                 bookingPostDto.toLocation(),
                 bookingPostDto.numberOfPassengers());
 
-        Booking createdBooking = bookingApiPort.newBooking(newBookingCommand);
+        Booking createdBooking = bookingApi.newBooking(newBookingCommand);
 
         var responseDto = new BookingResponseDto(
                 createdBooking.getId(),

@@ -1,18 +1,18 @@
 package nl.quintor.workshop.booking.config;
 
-import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
-import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
-import nl.quintor.workshop.booking.domain.service.BookingApiService;
+import nl.quintor.workshop.booking.domain.port.inbound.BookingApi;
+import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.port.outbound.CustomerManager;
+import nl.quintor.workshop.booking.domain.service.BookingService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BookingModuleConfiguration {
     @Bean
-    public BookingApiPort bookingService(
-            BookingRepositorySpiPort bookingRepositorySpiPort,
-            CustomerServiceClient customerServiceClient) {
-        return new BookingApiService(bookingRepositorySpiPort, customerServiceClient);
+    public BookingApi bookingApi(
+            BookingRepository bookingRepository,
+            CustomerManager customerManager) {
+        return new BookingService(bookingRepository, customerManager);
     }
 }

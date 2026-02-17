@@ -7,7 +7,7 @@ import nl.quintor.workshop.customer.domain.port.inbound.GetOrCreateCustomerReply
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface CustomerInternalMapper {
+public interface CustomerManagerMapper {
 
     GetOrCreateCustomerCommand toCommand(GetOrCreateCustomerRequest request);
 

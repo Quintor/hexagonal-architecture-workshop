@@ -2,10 +2,10 @@ package nl.quintor.workshop.booking.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.port.inbound.BookingApiPort;
+import nl.quintor.workshop.booking.domain.port.inbound.BookingApi;
 import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepositorySpiPort;
-import nl.quintor.workshop.booking.domain.port.outbound.CustomerServiceClient;
+import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
+import nl.quintor.workshop.booking.domain.port.outbound.CustomerManager;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 import nl.quintor.workshop.common.domain.exception.DomainValidationException;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +13,9 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @RequiredArgsConstructor
-public class BookingApiService implements BookingApiPort {
-    private final BookingRepositorySpiPort bookingRepositorySpiPort;
-    private final CustomerServiceClient customerServiceClient;
+public class BookingService implements BookingApi {
+    private final BookingRepository bookingRepository;
+    private final CustomerManager customerManager;
 
     @Override
     @Transactional
@@ -23,7 +23,7 @@ public class BookingApiService implements BookingApiPort {
         validateBookingLocations(command);
 
         var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerPhoneNumber());
-        var customerServiceResponse = customerServiceClient.getOrCreateCustomer(customerServiceRequest);
+        var customerServiceResponse = customerManager.getOrCreateCustomer(customerServiceRequest);
 
         var booking = Booking.builder()
                 .customerId(customerServiceResponse.customerId())
@@ -33,7 +33,7 @@ public class BookingApiService implements BookingApiPort {
                 .numberOfPassengers(command.numberOfPassengers())
                 .build();
 
-        return bookingRepositorySpiPort.save(booking);
+        return bookingRepository.save(booking);
     }
 
     private void validateBookingLocations(NewBookingCommand command) {

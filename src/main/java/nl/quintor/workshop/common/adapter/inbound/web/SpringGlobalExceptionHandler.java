@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class SpringGlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorResponseDto>> handleMethodArgumentNotValid(

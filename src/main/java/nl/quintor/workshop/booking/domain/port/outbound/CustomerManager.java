@@ -1,5 +1,5 @@
 package nl.quintor.workshop.booking.domain.port.outbound;
 
-public interface CustomerServiceClient {
+public interface CustomerManager {
     GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest);
 }
