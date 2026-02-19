@@ -1,4 +1,4 @@
-package nl.quintor.workshop.booking.adapter.outbound.service;
+package nl.quintor.workshop.booking.adapter.outbound.manager;
 
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerResponse;

@@ -9,7 +9,7 @@ class ModulithTest {
 
     // TODO: ook in ArchUnit doen?
     @Test
-    void verifyArchitecture() {
+    void verifyModules() {
 
         modules.verify();
     }
