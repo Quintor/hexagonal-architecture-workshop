@@ -34,10 +34,12 @@ We pakken hierbij de "aanvraag indienen" en "klant registreren" commands.
 
 ## Beginstaat van het project
 Meegeleverd op de workshop starter branch is een Java Spring Modulith project met een geïmplementeerde `customer` module en package opzet van de `booking` module.
-Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl.
-In de `customer` module is er een REST endpoint beschikbaar voor het verkrijgen van alle customers en een Modulith named interface 'CustomerApi' die registratie functionaliteit beschikbaar stelt die we gaan gebruiken in de Booking module later in de workshop.  
-> TODO Ik mis de package structuur van de booking module
-![Beginstaat diagram](docs/assignment-diagrammen/beginstaat.drawio.svg)
+In de `customer` module zijn er een tweetal REST endpoints beschikbaar en een Modulith named interface `CustomerApi` die registratie functionaliteit beschikbaar stelt die we gaan gebruiken in de Booking module later in de workshop.  
+
+![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.svg)  
+
+Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl. De packagestructuur ziet er als volgt uit:  
+![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.svg)  
 
 ## Stap 1: Implementeren van het Booking domein
 We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.booking.domain` package), de packagestructuur is al aanwezig in het project en zit als volgt in elkaar:   
@@ -90,7 +92,7 @@ Voor nu gebruiken we een random UUID voor de `customerId`.
   Ja, er is dan koppeling met een framework, maar we kunnen dit alsnog beperken tot een specifieke subset (transactie annotaties). 
   Tevens zijn annotaties in de domein laag te elimineren, maar voor deze workshop een te abstracte en complexe oplossing.
 
-> TODO: @Transactional annotatie toevoegen is niet beschreven.
+**F.** Maak van de `getOrCreateCustomer` methode een transactie door middel van de `org.springframework.transaction` dependency. 
 
 Als het goed is, ziet het domein binnen de booking module er nu als volgt uit:  
 ![Booking domein](docs/assignment-diagrammen/booking-domain-packages.drawio.svg)  
