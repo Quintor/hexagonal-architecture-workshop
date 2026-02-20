@@ -99,7 +99,7 @@ class ArchUnitHexagonalTest {
                 .resideInAPackage("..adapter..inbound..")
                 .should()
                 .onlyDependOnClassesThat()
-                .resideOutsideOfPackage("..adapter..outbound..");
+                .resideOutsideOfPackages("..adapter..outbound..", "domain.port.outbound..");
 
         inboundRules.check(importedClasses);
 
@@ -108,7 +108,7 @@ class ArchUnitHexagonalTest {
                 .resideInAPackage("..adapter..outbound..")
                 .should()
                 .onlyDependOnClassesThat()
-                .resideOutsideOfPackage("..adapter..inbound..");
+                .resideOutsideOfPackages("..adapter..inbound..", "domain.port.inbound..");
 
         outboundRules.check(importedClasses);
     }
