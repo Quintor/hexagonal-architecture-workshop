@@ -9,6 +9,8 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 class ArchUnitHexagonalTest {
 
+    // Domeinmodellen zijn simpele classes die in principe niets anders nodig hebben dan Java en andere models
+    // We kiezen wel voor het gebruik van Lombok
     @Test
     void domain_models_should_not_depend_on_other_packages() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
@@ -26,6 +28,8 @@ class ArchUnitHexagonalTest {
         rule.check(importedClasses);
     }
 
+    // Domein services mag gebruik maken van alles in het domein, dus ook de ports. We kiezen ervoor om specifieke
+    // dependencies wél te gebruiken, maar maken dit zo concreet mogelijk door alleen een subset dan toe te staan
     @Test
     void domain_service_should_only_depend_on_domain() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
@@ -45,74 +49,67 @@ class ArchUnitHexagonalTest {
         rule.check(importedClasses);
     }
 
+    // De domein inbound en outbound ports/types mogen niet elkaar gebruiken. Het is aan de service om ze allebei
+    // te gebruiken om domeinfunctionaliteiten (ook wel 'use cases') te implementeren.
     @Test
-    void application__should_only_depend_on_domain() {
+    void domain_inbound_outbound_ports_should_only_depend_on_domain_models() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
-        ArchRule rule = classes()
+        ArchRule inboundRules = classes()
                 .that()
-                .resideInAPackage("..application..")
+                .haveSimpleNameNotContaining("package-info")
+                .and()
+                .resideInAPackage("..domain..port.inbound..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
-                        "..domain..",
+                        "..domain..model..",
+                        "..domain..port.inbound..",
                         "java..",
                         "lombok..",
-                        "");
+                        "jakarta.validation..",
+                        "org.springframework.transaction..");
 
-        rule.check(importedClasses);
-    }
-    @Test
-    void infrastructure_inbound_should_only_depend_on_itself_and_inwards() {
-        JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
+        inboundRules.check(importedClasses);
 
-        ArchRule rule = classes()
+        ArchRule outboundRules = classes()
                 .that()
-                .resideInAPackage("..inbound..")
+                .haveSimpleNameNotContaining("package-info")
+                .and()
+                .resideInAPackage("..domain..port.outbound..")
                 .should()
                 .onlyDependOnClassesThat()
                 .resideInAnyPackage(
-                "..domain..",
-                        "..application..",
-                        "..inbound..",
-                        // TODO: overleggen of api een named interface in de infra layer wordt
-                        "..api..",
+                        "..domain..model..",
+                        "..domain..port.outbound..",
                         "java..",
                         "lombok..",
-                        "org.mapstruct..",
-                        "org.slf4j..",
-                        "org.springframework..",
-                        "com.fasterxml.jackson..",
-                        "jakarta.validation..");
+                        "jakarta.validation..",
+                        "org.springframework.transaction..");
 
-
-        rule.check(importedClasses);
+        outboundRules.check(importedClasses);
     }
 
     @Test
-    void infrastructure_outbound_should_only_depend_on_itself_and_inwards() {
+    void inbound_outbound_adapters_can_depend_on_anything_but_not_each_other() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
 
-        ArchRule rule = classes()
+        ArchRule inboundRules = classes()
                 .that()
-                .resideInAPackage("..outbound..")
+                .resideInAPackage("..adapter..inbound..")
                 .should()
                 .onlyDependOnClassesThat()
-                .resideInAnyPackage(
-                        "..domain..",
-                        "..application..",
-                        "..outbound..",
-                        // TODO: overleggen of api een named interface in de infra layer wordt
-                        "..api..",
-                        "java..",
-                        "lombok..",
-                        "org.mapstruct..",
-                        "org.slf4j..",
-                        "jakarta..",
-                        "org.springframework..",
-                        "jakarta.validation..");
+                .resideOutsideOfPackage("..adapter..outbound..");
 
+        inboundRules.check(importedClasses);
 
-        rule.check(importedClasses);
+        ArchRule outboundRules = classes()
+                .that()
+                .resideInAPackage("..adapter..outbound..")
+                .should()
+                .onlyDependOnClassesThat()
+                .resideOutsideOfPackage("..adapter..inbound..");
+
+        outboundRules.check(importedClasses);
     }
 }
