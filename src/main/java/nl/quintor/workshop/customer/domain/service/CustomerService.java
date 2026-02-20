@@ -18,13 +18,12 @@ public class CustomerService implements CustomerApi {
     @Override
     @Transactional
     public GetOrCreateCustomerReply getOrCreateCustomer(GetOrCreateCustomerCommand command) {
-        System.out.println("Phone number: " + command.phoneNumber());
         var customer = customerRepository.findByPhoneNumber(command.phoneNumber())
                 .orElseGet(() -> customerRepository.save(Customer.builder()
                         .phoneNumber(command.phoneNumber())
                         .build()));
 
-        return new GetOrCreateCustomerReply(customer.getId());
+        return new GetOrCreateCustomerReply(customer.getId(), customer.getPhoneNumber());
     }
 
     @Override

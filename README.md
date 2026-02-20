@@ -175,11 +175,11 @@ public record GetOrCreateCustomerResponse(String customerId) {
 
 **Het booking domein is nu gereed, ongeacht waar de customer informatie vandaan komt (e.g. in de monoliet zelf, of een externe microservice), de business logica hoeft niet worden aangepast!**
 
-**f.** We gaan nu een technische implementatie leveren in de vorm van een adapter die binnen het Spring process de methode calls gaat doen naar wat in run time daadwerkelijk de ```CustomerService``` is, welke een implementatie is van ```CustomerApi```. Net zoals bij de repositories, realiseren we dit in de ```adapter.outbound``` package van Booking.  
-In de ```manager``` package, maak een klasse ```CustomerManagerMapper```:  
+**f.** We gaan nu een technische implementatie leveren in de vorm van een adapter die binnen het Spring process de methode calls gaat doen naar wat in run time daadwerkelijk de ```CustomerService``` is, welke een implementatie is van ```CustomerApi```.  
+Net zoals bij de repositories, realiseren we dit in de ```adapter.outbound``` package van Booking. Maak in de child package `manager.spring` een klasse ```SpringCustomerMapper```:   
 ```java
 @Mapper(componentModel = "spring")
-public interface CustomerManagerMapper {
+public interface SpringCustomerMapper {
 
     GetOrCreateCustomerCommand toCommand(GetOrCreateCustomerRequest request);
 
@@ -187,7 +187,7 @@ public interface CustomerManagerMapper {
 }
 ```
 
-Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen. Je kunt je voorstellen dat in een microservice adapter hier eerst nog dto's moeten worden gemaakt als de properties bijvoorbeeld JSON naamgeving annotaties nodig heeft.  
+Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen. Je kunt je voorstellen dat in een microservice adapter hier eerst nog dto's moeten worden gemaakt als de properties bijvoorbeeld JSON-naamgeving annotaties nodig hebben.  
 Maak vervolgens de adapter klasse ```SpringCustomerManager``` die ```CustomerManager``` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk). Gebruik de aangemaakte mapper en de ```CustomerApi``` uit de customer module om de methode te implementeren.  
 
 
