@@ -10,11 +10,17 @@ Architecture.
 2. Het explicieter toepassen van bekende concepten door te communiceren in termen van patterns (DI, IoC, etc.)
 
 # De opdracht
-We gaan een deel van een taxibedrijf casus uitwerken in een bestaand project in hexagonal stijl. Het doel van de architectuur is om de domeinen uitbreidbaar op te zetten terwijl het een monolitische applicatie betreft en hierbij ook framework onafhankelijk te zijn. Dit betekent dat we slim moeten omgaan met de communicatie tussen domeinen en bij de loskoppeling van de "business" aspecten van framework/data/services etc. specifieke technologie.
+We gaan een deel van een taxibedrijf casus uitwerken in een bestaand project in hexagonale architectuur en modulaire monoliet stijl. 
+Het doel van de architectuur is om de verschillende domeinen geïsoleerd op te zetten terwijl het een monolitische applicatie betreft en hierbij de domein implementatie ook zoveel mogelijk techniek onafhankelijk te laten zijn. 
+Dit betekent dat we slim moeten omgaan met de communicatie tussen domeinen en bij de koppeling aan specifieke technologieën.
 
 ## Casus 'taxibedrijf Rëbu'
-Het systeem omvat functionaliteiten voor klanten en planners om te komen tot taxiritafspraken. In de gebruikersflow (zie afbeelding) kan een klant simpelweg met zijn telefoonnummer een boeking aanvragen zodat een planner hiermee aan de slag gaat. Het systeem bepaalt initieel de beschikbaarheid en de planner maakt hierop beslissingen. Kan een boeking niet direct worden vervuld, dan kan het systeem ook alternatieve opties bepalen. Lukt het echt niet, dan wordt een aanvraag geweigerd.
-![Event storming](docs/even-storming-diagram.drawio.svg)
+Het systeem omvat functionaliteiten voor klanten en planners om te komen tot taxiritafspraken. 
+In de gebruikersflow (zie event storming afbeelding) kan een klant simpelweg met zijn telefoonnummer een boeking aanvragen zodat een planner hiermee aan de slag gaat. 
+Het systeem bepaalt initieel de beschikbaarheid en de planner maakt hierop beslissingen. 
+Kan een boeking niet direct worden vervuld, dan kan het systeem ook alternatieve opties bepalen. 
+Lukt het echt niet, dan wordt een aanvraag geweigerd.
+![Event storming diagram](docs/even-storming-diagram.drawio.svg)
 
 Vanuit de event storming zijn de volgende drie domeinen te onderkennen:
 
@@ -23,23 +29,36 @@ Vanuit de event storming zijn de volgende drie domeinen te onderkennen:
 U = upstream
 D = downstream
 
-In scope van de workshop is een gedeeltelijke realisatie van de Customer en Booking context (waarbij booking afhankelijk is van upstream Customer). We pakken hierbij de "aanvraag indienen" en "klant registreren" commands.
+In scope van de workshop is een gedeeltelijke realisatie van de Customer en Booking context (waarbij booking afhankelijk is van upstream Customer). 
+We pakken hierbij de "aanvraag indienen" en "klant registreren" commands.
 
 ## Beginstaat van het project
-Meegeleverd op de workshop starter branch is een Java Spring project met een geïmplementeerde Customer module en package opzet van de Booking module. Er is een endpoint beschikbaar voor het verkrijgen van alle customers en een Modulith named interface 'CustomerApi' die registratie functionaliteit beschikbaar stelt die we gaan gebruiken in de Booking module later in de workshop.  
+Meegeleverd op de workshop starter branch is een Java Spring Modulith project met een geïmplementeerde `customer` module en package opzet van de `booking` module.
+Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl.
+In de `customer` module is er een REST endpoint beschikbaar voor het verkrijgen van alle customers en een Modulith named interface 'CustomerApi' die registratie functionaliteit beschikbaar stelt die we gaan gebruiken in de Booking module later in de workshop.  
+> TODO Ik mis de package structuur van de booking module
 ![Beginstaat diagram](docs/assignment-diagrammen/beginstaat.drawio.svg)
 
-## Stap 1: introduceren van het Booking domein
-We gaan beginnen met de domeinlaag van de Booking module (domain package), de packagestructuur is al aanwezig in het project en zit als volgt in elkaar:   
-- Model: dient domeinmodellen te bevatten
+## Stap 1: Implementeren van het Booking domein
+We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.booking.domain` package), de packagestructuur is al aanwezig in het project en zit als volgt in elkaar:   
+- Model: dient de domeinmodellen te bevatten
 - Port.inbound: bevat interfaces die business functionaliteit van het domein beschikbaar stellen 
-- Port.outbound: bevat interfaces die tussen het domein en de buitenwereld/techniek zitten, zoals repositories 
+- Port.outbound: bevat interfaces die de domeinlaag nodig heeft van de buitenwereld, zoals repositories 
 - Service: bevat de implementatie van de business logica van het domein, is afhankelijk van de Port.outbound interfaces en implementeert de Port.inbound interfaces
 
-**a.** Maak een ```Booking``` en ```BookingStatus``` klasse met properties op basis het onderstaande diagram. Maak er lombok ```@Value``` klasses van die met een builder te initialiseren zijn.  
+**A.** Maak een ```Booking``` en ```BookingStatus``` klasse aan in de `model` package met properties op basis het onderstaande diagram. 
+Maak er lombok ```@Value``` klasses van die met een builder te initialiseren zijn.  
 ![Booking domain model](docs/ddd-domain-model.drawio.svg)    
-**b.** We willen uiteindelijk een boeking in een relationele database opslaan, maar in het domein willen we hier niets van weten. Er moet echter wel een interface beschikbaar komen waarop we een actie voor het opslaan van het zojuist aangemaakte booking model kunnen uitvoeren. Maak daarom een BookingRepository interface aan in de Port.outbound (want dit gaat om uitgaande communicatie) package met een "save" methode met een Booking als parameter en als return type. **Met uitzondering van op de model package, mag deze klasse geen enkele dependency hebben.**  
-**c.** Hoewel het domeinmodel een ```customerId``` bevat, willen we in onze functionaliteit voor het aanmaken van een booking niet een customer id ontvangen. Het moet mogelijk zijn simpelweg een telefoonnummer op te geven naast de aanvraaginformatie. Om uiteindelijk achter het customer id te komen, gaat het systeem dit regelen in een latere stap. Maak voor nu een ```NewBookingCommand``` record aan met properties:
+
+**B.** We willen uiteindelijk een boeking in een relationele database opslaan, maar in het domein willen we niet van technische implementatie klassen afhankelijk zijn. 
+Er moet echter wel een interface beschikbaar komen waarop we een actie voor het opslaan van het zojuist aangemaakte booking model kunnen uitvoeren. 
+Maak daarom een BookingRepository interface aan in de `port.outbound` (want dit gaat om uitgaande communicatie) package met een `save` methode met `Booking` als parameter en als return type. 
+**Met uitzondering van de `model` package, mag deze klasse geen andere dependencies hebben.**  
+
+**C.** Hoewel het domeinmodel een `customerId` bevat, willen we in onze functionaliteit voor het aanmaken van een booking niet een customer id ontvangen. 
+Het moet mogelijk zijn simpelweg een telefoonnummer op te geven naast de aanvraaginformatie. 
+Het koppelen van de booking aan een al dan niet bestaand klantprofiel op basis van het telefoonnummer regelen we in een latere stap. 
+Maak voor nu een `NewBookingCommand` record aan met properties:
 ```java
 String customerPhoneNumber,
 LocalDateTime dateTime,
@@ -47,14 +66,31 @@ String fromLocation,
 String toLocation,
 byte numberOfPassengers
 ```
-Het betreft een command, omdat onder andere het side effect van het aanmaken van een booking in een data store gaat hebben (loose coupled via de outbound port uiteraard).  
-**d.** Nu moeten we een domein functionaliteit interface beschikbaar stellen waar de aangemaakte ```NewBookingCommand``` type als parameter in kan en een Booking als return type heeft. Maak een interface aan in de Port.inbound package (want dit gaat om ingaande communicatie) genaamd ```BookingApi``` met een methode ```createBooking``` hiervoor. **Met uitzondering van op de model package, mag deze klasse geen enkele dependency (voor nu) hebben.**   
-**e.** Er staan nu een model, een command en inbound en outbound ports klaar. Dan is het nu tijd om een service te maken die de boel aan elkaar knoopt: maak in de ```service``` package een ```BookingService``` klasse aan die de ```BookingApi``` interface implementeert. Deze klasse heeft een associatie met de ```BookingRepository``` interface. In de createBooking methode moet een Booking object worden gecreëerd op basis van de informatie in de NewBookingCommand en vervolgens worden opgeslagen via de BookingRepository. Voor nu mag er nog geen logica worden toegevoegd voor het verkrijgen van een customerId, gebruik daarom een random UUID.
+Het betreft hier een command die overeenkomt met het 'Aanvraag indienen' command in het eerdere event storming diagram. 
+Een command veranderd de gegevenstoestand van een domein als deze succesvol is uitgevoerd.
 
-**Optioneel: meer weten over "ports", zie ['Definition of Inbound and Outbound Ports'](<https://scalastic.io/en/hexagonal-architecture-domain/#1-definition-of-inbound-and-outbound-ports>) (5 min)**  
+**D.** Nu kunnen we het command beschikbaar stellen via een interface met de aangemaakte `NewBookingCommand` als parameter en een `Booking` als return type. 
+Maak een interface aan in de `port.inbound` package (want dit gaat om ingaande communicatie) genaamd `BookingApi` met een methode `createBooking` hiervoor. 
+**Met uitzondering van de `model` package, mag deze klasse geen andere dependencies hebben (voor nu).**   
+
+**E.** Er staan nu een model, inbound port en outbound ports klaar. 
+Dan is het nu tijd om een service te maken die de boel aan elkaar knoopt: maak in de `service` package een `BookingService` klasse aan die de `BookingApi` interface implementeert. 
+Deze klasse heeft een memberfield voor de `BookingRepository` interface. 
+In de createBooking methode moet een `Booking` object worden gecreëerd op basis van de informatie in de `NewBookingCommand` en vervolgens worden opgeslagen via de `BookingRepository`. 
+Voor nu gebruiken we een random UUID voor de `customerId`.
+
+**Optioneel: meer weten over "ports", zie ['Definition of Inbound and Outbound Ports'](<https://scalastic.io/en/hexagonal-architecture-domain/#1-definition-of-inbound-and-outbound-ports>) (5 min)**
+
 **Optioneel: wat toelichting op keuzes**
-- De service klasse heeft als 'logica' nu alleen het omzetten van het command naar een Booking, maar dit is ook de plek om business logica te plaatsen. Het is dan minder toepasselijk om een mapper te maken die command naar booking omzet, ook gezien de properties niet één op één overeenkomen. Daarom maken we hier deze keuze om programmatisch NewBookingCommand om te zetten. Een service voert namelijk uit door meerdere stappen uit voeren van verzoek naar antwoord, en is dus niet een mapper/transformator.
-- In een daadwerkelijke implementatie wil je dat deze methode een transactie aftrapt. We maken de keuze om hiervoor de Spring Framework @Transactional annotaties te gebruiken. Ja, er is dan koppeling met een framework, maar we kunnen dit alsnog beperken tot een specifieke subset (transactie annotaties). Er is geen grote refactor nodig om van deze annotaties af te komen bij een framework wissel, terwijl het voordeel van transactiemanagement op deze manier groot is.
+- De service klasse heeft als 'logica' nu alleen het omzetten van het command naar een Booking, maar dit is ook de plek om business logica te plaatsen. 
+  Het is dan minder toepasselijk om een mapper te maken die command naar booking omzet, ook gezien de properties niet één op één overeenkomen. 
+  Daarom maken we hier deze keuze om programmatisch NewBookingCommand om te zetten. 
+- In een daadwerkelijke implementatie wil je dat de `createBooking` methode een transactie aftrapt. 
+  We maken de keuze om hiervoor de Spring Framework `@Transactional` annotaties te gebruiken. 
+  Ja, er is dan koppeling met een framework, maar we kunnen dit alsnog beperken tot een specifieke subset (transactie annotaties). 
+  Tevens zijn annotaties in de domein laag te elimineren, maar voor deze workshop een te abstracte en complexe oplossing.
+
+> TODO: @Transactional annotatie toevoegen is niet beschreven.
 
 Als het goed is, ziet het domein binnen de booking module er nu als volgt uit:  
 ![Booking domein](docs/assignment-diagrammen/booking-domain-packages.drawio.svg)  
@@ -136,7 +172,7 @@ public class BookingModuleConfiguration {
 
 **e.** Laten we kijken of het werkt, run ```FunctionalIT``` in de test directory. De test ```createNewBooking_ValidBooking_StoresBookingInDB``` zou moeten slagen indien bovenstaande stappen correct zijn uitgevoerd. De overige tests kun je voor nu negeren.  
 
-## Stap 4: architectuur validatie met ?  
+## Stap 4: architectuur validatie met ArchUnit 
 
 ## Stap 5: Booking uitbreiden met informatie vanuit het Customer domein
 We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in de ```BookingPostDto``` en ```Booking``` model. Terugkijkend naar de eerdere context map, zien we dat Booking downstream is van Customer. Deze bounded context afhankelijk gaan we laten terugkomen in de implementatie, het project reflecteert daarmee letterlijk 'de business'. We gaan dit ondersteunen door middel van ```Spring modulith```. 
