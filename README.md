@@ -36,7 +36,7 @@ We pakken hierbij de "aanvraag indienen" en "klant registreren" commands.
 Meegeleverd op de workshop starter branch is een Java Spring Modulith project met een geïmplementeerde `customer` module en package opzet van de `booking` module.
 In de `customer` module zijn er een tweetal REST endpoints beschikbaar en een Modulith named interface `CustomerApi` die registratie functionaliteit beschikbaar stelt die we gaan gebruiken in de Booking module later in de workshop.  
 
-![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.svg)  
+![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.svg)
 
 Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl. De packagestructuur ziet er als volgt uit:  
 ![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.svg)  
@@ -251,5 +251,45 @@ import org.springframework.modulith.NamedInterface;
 
 Run nu nogmaals de ```ModulithTest```, ```verifyModules``` zou nu moeten slagen.  
 Een leuke feature van Modulith is dat er in de targer directory een puml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt? Het komt precies overeen met de eerdere context map!  
-![Modulith modules overview](docs/assignment-diagrammen/modulith-generated-plaatje.png)
+![Modulith modules overview](docs/assignment-diagrammen/modulith-generated-plaatje.png)  
 
+## Stap 6: Validation en exception handling
+
+## Stap 7: CustomerManager Spring adapter vervangen door REST adapter  
+Als het customer domein op een gegeven moment geen onderdeel meer is van de Rebü applicatie, maar een losse applicati, dan zal deze via een andere API gekoppeld moeten worden.
+In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen. We gaan indirect de CustomerController gebruiken door met een REST client tegen onszelf te praten. 
+We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `RestCustomerManager`. 
+Merk op dat je bij deze refactoring geen logica in het booking domein hoeft aan te passen.
+
+**A.** Het REST API contract is als volgt: PUT op /customers/phoneNumber welke een dto terugstuurt met `id` als property. Deze gaan we nodig hebben als `customerId` property in `Booking`. Voor de SpringAdapter moesten we een command en reply mappen, maar hier moeten we dus mappen op de REST API.
+Maak daarom een `RestCustomerResponseDto` record klasse aan in de `adapter.outbound.manager.rest` package van Booking:  
+```java
+public record RestCustomerResponseDto(UUID id,
+                                      String phoneNumber){
+}
+```
+
+Deze kan het API-response parsen. We moeten uiteindelijk toewerken naar een return type `GetOrCreateCustomerResponse` om het interface te implementeren dat de domainlaag kent. Deze werkt met `customerId` naamgeving i.p.v. `id` Maak daarom ook een mapper aan genaamd `RestCustomerDtoMapper`:  
+```java
+@Mapper(componentModel = "spring")
+public interface RestCustomerDtoMapper {
+    @Mapping(source = "id", target = "customerId")
+    GetOrCreateCustomerResponse toGetOrCreateCustomerResponse(RestCustomerResponseDto dto);
+}
+```  
+Zoals je ziet lost deze de property naamgeving mismatch op.  
+
+**B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren. Maak een klasse `RestCustomerManager` die `CustomerManager` implementeert. Geef deze klasse ook een memberfield `private final RestClient restClient`. Deze is al verzorgd in de configuratie.
+Implmenteer nu de adapter door:  
+1. `restClient.put()` te gebruiken voor een call naar localhost 8080
+2. Het endpoint is `/customers/{phoneNumber}` waarbij `phoneNumber` afkomstig is van de `GetOrCreateCustomerRequest`
+3. Parse de response via `RestCustomerResponseDto`
+4. Map de response naar `GetOrCreateCustomerResponse` via de mapper en return dit
+
+**C.** Voordat we deze adapter in runtime gaan gebruiken, check nog een keer of de tests die starten met `getAllCustomers` en `createNewBooking_ValidBooking_StoresBookingInDB` uit `FunctionalIT` nog steeds slagen. 
+Is dat het geval, comment dan in `SpringCustomerManager` `@Component` uit. Voeg aan `RestCustomerManager` de annotatie `@Component` toe. Run de tests opnieuw, ze zouden nog steeds moeten slagen. Is dat het geval, dan heb je zonder problemen
+een technische implementatie vervangen, terwijl er op domeinniveau geen wijzigingen nodig waren! 
+
+
+
+TODO: project eindstaat diagram hier

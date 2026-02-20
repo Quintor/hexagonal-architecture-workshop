@@ -10,7 +10,7 @@ import org.springframework.web.client.RestClient;
 
 @Component
 @RequiredArgsConstructor
-public class RestClientCustomerManager implements CustomerManager {
+public class RestCustomerManager implements CustomerManager {
     private final RestClient restClient;
     private final RestCustomerDtoMapper dtoMapper;
 
