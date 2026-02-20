@@ -106,6 +106,7 @@ We hebben dus wel een variant nodig van Booking die wél JPA-annotaties heeft. D
 
 **B.** Zoals je weet van JPA-repositories, moet er een interface worden aangemaakt die overerft van ```JpaRepository```. We kunnen dus niet direct de ```BookingRepository``` interface van het domein implementeren, omdat deze geen JpaRepository is en andere methode (signatures) heeft. We moeten dus een adapter maken die de BookingRepository interface implementeert en intern gebruik maakt van een JPA repository, maar ook de mapping verzorgt tussen wat JPA kent (BookingEntity) en wat het domein kent (Booking).  
 De volgende classes heb je daarom eerst nodig in de persistence package:  
+
 - ```SpringDataBookingRepository```
 ```java
   @Repository
@@ -176,8 +177,8 @@ public class BookingModuleConfiguration {
 
 ## Stap 4: architectuur validatie met ArchUnit
 
-**ArchUnit**
-[ArchUnit](<https://www.archunit.org/>) is een test library die helpt bij het afdwingen van architectuurregels. We hebben in de workshop al veel keuzes gemaakt op het gebied van 
+**ArchUnit**  
+[ArchUnit](<https://www.archunit.org>) is een test library die helpt bij het afdwingen van architectuurregels. We hebben in de workshop al veel keuzes gemaakt op het gebied van 
 architectuur, maar hoe zorgen we ervoor dat deze ook daadwerkelijk worden nageleefd?
 
 **A.** Open `ArchUnitHexagonalTest` in de test directory en neem deze even door. Run de tests ook een keertje. Als het goed is slagen ze allemaal, 

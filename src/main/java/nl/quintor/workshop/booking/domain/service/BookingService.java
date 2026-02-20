@@ -19,7 +19,7 @@ public class BookingService implements BookingApi {
 
     @Override
     @Transactional
-    public Booking newBooking(NewBookingCommand command) {
+    public Booking createBooking(NewBookingCommand command) {
         validateBookingLocations(command);
 
         var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerPhoneNumber());

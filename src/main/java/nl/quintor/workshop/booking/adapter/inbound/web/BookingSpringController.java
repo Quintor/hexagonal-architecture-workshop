@@ -29,7 +29,7 @@ public class BookingSpringController {
                 bookingPostDto.toLocation(),
                 bookingPostDto.numberOfPassengers());
 
-        Booking createdBooking = bookingApi.newBooking(newBookingCommand);
+        Booking createdBooking = bookingApi.createBooking(newBookingCommand);
 
         var responseDto = new BookingResponseDto(
                 createdBooking.getId(),
