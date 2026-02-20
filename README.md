@@ -191,6 +191,7 @@ in een specifieke context best wel complex worden. Zeker wanneer er meerdere dom
 - Voeg memberfield `CustomerResponseDto dto = null;` toe aan interface `CustomerApi` in de Customer domain inbound port laag (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)  
 - Voeg memberfield `private final SpringCustomerManager customerManager;` toe aan klasse `BookingSpringController` in de Booking inbound adapter laag  
 Run nu de tests. **Wat** faalt er **en waarom** zou je dat verwachten met deze architectuur?  
+Maak aanpassingen aan de implementatie zodat de tests weer slagen.
 
 
 ## Stap 5: Booking uitbreiden met informatie vanuit het Customer domein
