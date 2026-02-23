@@ -56,8 +56,11 @@ We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.b
 - `service` bevat de implementatie van de business logica van het domein, is afhankelijk van de Port.outbound interfaces en implementeert de Port.inbound interfaces
 
 **A.** Maak een `Booking` en `BookingStatus` klasse aan in de `model` package met properties op basis het onderstaande diagram.
-Maak er lombok `@Value` klasses van die met een builder te initialiseren zijn.  
-![Booking domain model](docs/ddd-domain-model.drawio.svg)
+Maak van het model een lombok `@Value @AllArgsConstructor @Builder` klasse.  
+![Booking domain model](docs/ddd-domain-model.drawio.svg)  
+
+```java
+
 
 **B.** We willen uiteindelijk een boeking in een relationele database opslaan, maar in het domein willen we niet van technische implementatie afhankelijk zijn.
 Er moet echter wel een interface beschikbaar komen waarop we een actie voor het opslaan van het zojuist aangemaakte booking model kunnen uitvoeren.
