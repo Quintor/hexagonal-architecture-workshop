@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.5.2" pages="9">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0" version="29.5.2" pages="10">
   <diagram name="Page-1" id="JGHvEiIsy05GWuxAoFEy">
     <mxGraphModel dx="2916" dy="1155" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -835,7 +835,7 @@
         <mxCell id="T5lg-46YoXkGS8t0UgEg-2" parent="T5lg-46YoXkGS8t0UgEg-1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;align=center;verticalAlign=top;spacing=0;size=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fillColor=#CCE5FF;" value="adapter" vertex="1">
           <mxGeometry height="570" width="1640" x="10" y="150" as="geometry" />
         </mxCell>
-        <mxCell id="T5lg-46YoXkGS8t0UgEg-3" parent="T5lg-46YoXkGS8t0UgEg-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;web" vertex="1">
+        <mxCell id="T5lg-46YoXkGS8t0UgEg-3" parent="T5lg-46YoXkGS8t0UgEg-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;inbound" vertex="1">
           <mxGeometry height="295.75" width="400" x="50" y="180" as="geometry" />
         </mxCell>
         <mxCell id="T5lg-46YoXkGS8t0UgEg-4" parent="T5lg-46YoXkGS8t0UgEg-1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;align=center;verticalAlign=top;spacing=0;size=30;fillColor=#99CCFF;" value="domain" vertex="1">
@@ -850,7 +850,7 @@
         <mxCell id="T5lg-46YoXkGS8t0UgEg-7" parent="T5lg-46YoXkGS8t0UgEg-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;service" vertex="1">
           <mxGeometry height="206.25" width="130" x="860" y="393.75" as="geometry" />
         </mxCell>
-        <mxCell id="T5lg-46YoXkGS8t0UgEg-8" parent="T5lg-46YoXkGS8t0UgEg-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;inbound - web" vertex="1">
+        <mxCell id="T5lg-46YoXkGS8t0UgEg-8" parent="T5lg-46YoXkGS8t0UgEg-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;web" vertex="1">
           <mxGeometry height="249.37" width="370" x="70" y="208.75" as="geometry" />
         </mxCell>
         <mxCell id="T5lg-46YoXkGS8t0UgEg-9" parent="T5lg-46YoXkGS8t0UgEg-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;outbound" vertex="1">
@@ -1166,10 +1166,10 @@
         <mxCell id="dTwlQWCqh53_i-pxAxj3-31" parent="dTwlQWCqh53_i-pxAxj3-1" style="html=1;whiteSpace=wrap;" value="SpringDataBookingRepository" vertex="1">
           <mxGeometry height="51.25" width="179" x="1737" y="628.25" as="geometry" />
         </mxCell>
-        <mxCell id="qfAn4MhG0EMdVJ7ouwJo-0" parent="dTwlQWCqh53_i-pxAxj3-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;web" vertex="1">
+        <mxCell id="qfAn4MhG0EMdVJ7ouwJo-0" parent="dTwlQWCqh53_i-pxAxj3-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;inbound" vertex="1">
           <mxGeometry height="295.75" width="400" x="330" y="483.75" as="geometry" />
         </mxCell>
-        <mxCell id="qfAn4MhG0EMdVJ7ouwJo-1" parent="dTwlQWCqh53_i-pxAxj3-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;inbound" vertex="1">
+        <mxCell id="qfAn4MhG0EMdVJ7ouwJo-1" parent="dTwlQWCqh53_i-pxAxj3-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;web" vertex="1">
           <mxGeometry height="249.37" width="370" x="350" y="512.5" as="geometry" />
         </mxCell>
         <mxCell id="qfAn4MhG0EMdVJ7ouwJo-2" parent="dTwlQWCqh53_i-pxAxj3-1" style="html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" value="BookingPostRequestDto" vertex="1">
@@ -1423,6 +1423,53 @@
               <mxPoint x="870" y="1461" />
             </Array>
           </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="archunit" id="WT4LFNj78vcLa4gf2aJ2">
+    <mxGraphModel dx="2431" dy="1359" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-0" />
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-1" parent="2lk2ksQKQ4K3toTfA5fB-0" />
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-2" parent="2lk2ksQKQ4K3toTfA5fB-1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;align=center;verticalAlign=top;spacing=0;size=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fillColor=#CCE5FF;" value="adapter" vertex="1">
+          <mxGeometry height="570" width="1640" x="10" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-3" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;web" vertex="1">
+          <mxGeometry height="295.75" width="400" x="50" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-4" parent="2lk2ksQKQ4K3toTfA5fB-1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;align=center;verticalAlign=top;spacing=0;size=30;fillColor=#99CCFF;" value="domain" vertex="1">
+          <mxGeometry height="431.25" width="750" x="460" y="179.3800000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-5" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&lt;div align=&quot;left&quot;&gt;&amp;nbsp;model&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="160" x="745" y="213.75" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-6" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&lt;div&gt;&amp;nbsp;port - inbound&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="206.25" width="345" x="495" y="393.75" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-7" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;service" vertex="1">
+          <mxGeometry height="206.25" width="130" x="860" y="393.75" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-8" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;inbound" vertex="1">
+          <mxGeometry height="61.25" width="100" x="70" y="208.75" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-9" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;outbound" vertex="1">
+          <mxGeometry height="517" width="396" x="1214" y="183" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-10" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&lt;div&gt;&amp;nbsp;persistence&lt;/div&gt;" vertex="1">
+          <mxGeometry height="226.25" width="380" x="1220" y="213.75" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-11" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&lt;div&gt;&amp;nbsp;port - outbound&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="207.5" width="160" x="1010" y="392.5" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-12" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;manager" vertex="1">
+          <mxGeometry height="226.25" width="380" x="1222" y="458.12" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-13" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;spring" vertex="1">
+          <mxGeometry height="180" width="170" x="1230" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="2lk2ksQKQ4K3toTfA5fB-14" parent="2lk2ksQKQ4K3toTfA5fB-1" style="html=1;shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;align=left;" value="&amp;nbsp;rest" vertex="1">
+          <mxGeometry height="180" width="170" x="1420" y="490" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
