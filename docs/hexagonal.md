@@ -1,4 +1,13 @@
-# Hexagonal layers
+# Hexagonal Architecture
+
+Het toepassen van een modulaire applicatie waarbinnen een hexagonal architecture gebruikt wordt zorgt ervoor dat:
+
+1. De applicatie 10 jaar of langer mee kan, wijzigingen moeten zo makkelijk als mogelijk zijn
+2. De business logica geisoleerd wordt, dus verandering in infrastructuur en manieren van het ontsluiten van de
+   applicatie vereisen geen wijzigingen in de business logica
+3. Het businessdomein expliciet duidelijk wordt, het domein is breder dan je eigen database
+
+# layers
 In een hexagonal architecture spelen twee lagen de hoofdrol. Dit zijn de 'Inside' en de 'Outside'.
 De binnenkant bevat het domein en de business logica. Dit zou ook verder gescheiden kunnen worden.
 De buitenkant bevat de 'Adapters', die leggen de connecties met de buitenwereld, zoals binnenkomende HTTP requests of queries naar databases.
