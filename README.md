@@ -319,7 +319,7 @@ public class BookingSpringController {
 ![Booking domein met persistence en web adapter](docs/assignment-diagrammen/booking-domein-plus-persistence-en-web.drawio.svg)
 
 **Hoe zit het nu met Spring bean management?**  
-We hebben nu in de adapter laag op de gebruikelijke manier beans gemaakt met de gebruikelijke Spring annotaties.
+We hebben nu in de adapter laag beans gemaakt met de gebruikelijke Spring annotaties.
 Mogelijk vraag je je af hoe dat echter zit voor de `BookingService`, want die injecten we immers in de `BookingSpringController` controller via de `BookingApi` interface.  
 Omdat de verantwoordelijkheid in de adapter laag ligt bij het implementeren van de techniek gebruiken we daar gemakkelijk ook dus de Spring component annotaties.
 Het domein houden we echter zoveel mogelijk onafhankelijk van techniek en het Spring framework.
@@ -350,12 +350,13 @@ architectuur, maar hoe zorgen we ervoor dat deze ook daadwerkelijk worden nagele
 want we hebben in de voorgaande stappen de regels van deze tests opgevolgd en de beginstaat van het project ook en daarmee voldaan aan de architectuur.
 
 **B.** Er zijn natuurlijk foutjes die je kan maken die vrij duidelijk zijn, zoals het gebruiken van een service in een model of in een controller
-direct te praten met een repository in plaats van via een service. De tests zorgen er gelukkig voor dat dit soort dingen aan het licht zouden komen in een pipeline.
+direct te praten met een repository, in plaats van via een service. De tests zorgen er gelukkig voor dat dit soort dingen aan het licht zouden komen in een pipeline.
 Er zijn echter ook fouten die minder duidelijk zijn en komen vanuit deze specifieke hexagonal stijl die wij toepassen. In de loop van de tijd kan het toepassen van deze architectuurstijl
 in een specifieke context best wel complex worden. Zeker wanneer er meerdere domeinen zijn waar meerdere developers aan werken, kunnen er subtiele fouten worden gemaakt. Pas bijvoorbeeld eens het volgende toe:
 
 - Voeg memberfield `CustomerResponseDto dto = null;` toe aan interface `CustomerApi` in de Customer domain inbound port laag (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
-- Voeg memberfield `private final SpringCustomerManager customerManager;` toe aan klasse `BookingSpringController` in de Booking inbound adapter laag  
+- Voeg memberfield `private final SpringCustomerManager customerManager;` toe aan klasse `BookingSpringController` in de Booking inbound adapter laag.
+
   Run nu de tests. **Wat** faalt er **en waarom** zou je dat verwachten met deze architectuur?  
   Maak aanpassingen aan de implementatie zodat de tests weer slagen.
 
