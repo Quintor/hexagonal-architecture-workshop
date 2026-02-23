@@ -7,7 +7,8 @@ import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
 
-public record BookingPostDto(
+public record BookingPostRequestDto(
+        @NotBlank(message = "Customer name is required") @JsonProperty(required = true) String customerName,
         @NotBlank(message = "Customer phone number is required") @JsonProperty(required = true) String customerPhoneNumber,
         @NotNull(message = "Date and time is required") @JsonProperty(required = true) LocalDateTime dateTime,
         @NotBlank(message = "From location is required") @JsonProperty(required = true) String fromLocation,

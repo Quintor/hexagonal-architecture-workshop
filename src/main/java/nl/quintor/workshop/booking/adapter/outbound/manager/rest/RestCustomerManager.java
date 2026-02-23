@@ -7,7 +7,6 @@ import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRespo
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-
 @Component
 @RequiredArgsConstructor
 public class RestCustomerManager implements CustomerManager {
@@ -17,8 +16,10 @@ public class RestCustomerManager implements CustomerManager {
     @Override
     public GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest request) {
         try {
+            var requestDto = new CustomerPostRequestDto(request.name());
             var responseDto = restClient.put()
                     .uri("http://localhost:8080/customers/{phoneNumber}", request.phoneNumber())
+                    .body(requestDto)
                     .retrieve()
                     .body(RestCustomerResponseDto.class);
 

@@ -20,7 +20,8 @@ public class BookingService implements BookingApi {
     public Booking createBooking(NewBookingCommand command) {
         validateBookingLocations(command);
 
-        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerPhoneNumber());
+        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerName(),
+                command.customerPhoneNumber());
         var customerServiceResponse = customerManager.getOrCreateCustomer(customerServiceRequest);
 
         var booking = Booking.builder()

@@ -59,9 +59,6 @@ We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.b
 Maak van het model een lombok `@Value @AllArgsConstructor @Builder` klasse.  
 ![Booking domain model](docs/ddd-domain-model.drawio.svg)
 
-````java
-
-
 **B.** We willen uiteindelijk een boeking in een relationele database opslaan, maar in het domein willen we niet van technische implementatie afhankelijk zijn.
 Er moet echter wel een interface beschikbaar komen waarop we een actie voor het opslaan van het zojuist aangemaakte booking model kunnen uitvoeren.
 Maak daarom een `BookingRepository` interface aan in de `port.outbound` package met een `save` methode met `Booking` als parameter en als return type.
@@ -76,7 +73,7 @@ import nl.quintor.workshop.booking.domain.model.Booking;
 public interface BookingRepository {
     Booking save(Booking booking);
 }
-````
+```
 
 **C.** Nu gaan we de inbound port, welke de API van het domein beschrijft, definiëren.
 Maak een `NewBookingCommand` record aan in de `port.inbound` package:
@@ -85,11 +82,11 @@ Maak een `NewBookingCommand` record aan in de `port.inbound` package:
 package nl.quintor.workshop.booking.domain.port.inbound;
 import java.time.LocalDateTime;
 
-public record NewBookingCommand(String customerPhoneNumber, LocalDateTime dateTime, String fromLocation, String toLocation, byte numberOfPassengers) {}
+public record NewBookingCommand(String customerName, String customerPhoneNumber, LocalDateTime dateTime, String fromLocation, String toLocation, byte numberOfPassengers) {}
 ```
 
 Hoewel de `Booking` domeinklasse een `customerId` bevat, willen we in onze functionaliteit voor het aanmaken van een booking niet een customer id ontvangen.
-Het moet voor de klant mogelijk zijn simpelweg een telefoonnummer op te geven bij de aanvraaginformatie.
+Het moet voor de klant mogelijk zijn simpelweg een telefoonnummer en naam op te geven bij de aanvraaginformatie.
 Het betreft hier een command die overeenkomt met het _'Aanvraag indienen'_ command in het eerdere event storming diagram.
 Een command veranderd de gegevenstoestand van een domeinobject als deze succesvol is uitgevoerd.
 Het koppelen van de booking aan een al dan niet bestaand klantprofiel op basis van het telefoonnummer regelen we in een latere stap.
@@ -255,10 +252,11 @@ Stel dat er gevoelige informatie in `Booking` klassen komt te staan, dan is het 
 Een nadeel van deze keuze is natuurlijk dat er meer code moet worden geschreven en ook dat input validatie tweemaal moet worden geïmplementeerd, zowel voor de controller dto's als de types die de `BookingApi` gebruikt.
 
 **A.** We hebben request en response dto's nodig voordat we een endpoint kunnen maken.
-Maak in `adapter.inbound.web` package het `BookingPostDto` record aan:
+Maak in `adapter.inbound.web` package het `BookingPostRequestDto` record aan:
 
 ```java
-public record BookingPostDto(String customerPhoneNumber,
+public record BookingPostRequestDto(String customerName,
+                             String customerPhoneNumber,
                              LocalDateTime dateTime,
                              String fromLocation,
                              String toLocation,
@@ -291,13 +289,14 @@ public class BookingSpringController {
     private final BookingApi bookingApi;
 
     @PostMapping
-    public ResponseEntity<BookingResponseDto> createNewBooking(@Valid @RequestBody BookingPostDto bookingPostDto) {
+    public ResponseEntity<BookingResponseDto> createNewBooking(@Valid @RequestBody BookingPostRequestDto bookingPostRequestDto) {
         var newBookingCommand = new NewBookingCommand(
-                bookingPostDto.customerPhoneNumber(),
-                bookingPostDto.dateTime(),
-                bookingPostDto.fromLocation(),
-                bookingPostDto.toLocation(),
-                bookingPostDto.numberOfPassengers());
+                bookingPostRequestDto.customerName(),
+                bookingPostRequestDto.customerPhoneNumber(),
+                bookingPostRequestDto.dateTime(),
+                bookingPostRequestDto.fromLocation(),
+                bookingPostRequestDto.toLocation(),
+                bookingPostRequestDto.numberOfPassengers());
 
         Booking createdBooking = bookingApi.createBooking(newBookingCommand);
 
@@ -343,26 +342,28 @@ Aan de overige testen gaan we nog werken.
 ## Stap 4: architectuur validatie met ArchUnit
 
 **ArchUnit**  
-[ArchUnit](https://www.archunit.org) is een test library die helpt bij het afdwingen van architectuurregels. We hebben in de workshop al veel keuzes gemaakt op het gebied van
-architectuur, maar hoe zorgen we ervoor dat deze ook daadwerkelijk worden nageleefd?
+We hebben in de workshop al veel keuzes gemaakt op het gebied van de software architectuur, maar hoe zorgen we ervoor dat deze ook daadwerkelijk worden nageleefd?
+[ArchUnit](https://www.archunit.org) kan ons daarbij helpen.
+Het is een test library die helpt bij het afdwingen van architectuurregels zodat we die automatisch kunnen valideren.
 
 **A.** Open `ArchUnitHexagonalTest` in de test directory en neem deze even door. Run de tests ook een keertje. Als het goed is slagen ze allemaal,
 want we hebben in de voorgaande stappen de regels van deze tests opgevolgd en de beginstaat van het project ook en daarmee voldaan aan de architectuur.
 
 **B.** Er zijn natuurlijk foutjes die je kan maken die vrij duidelijk zijn, zoals het gebruiken van een service in een model of in een controller
-direct te praten met een repository, in plaats van via een service. De tests zorgen er gelukkig voor dat dit soort dingen aan het licht zouden komen in een pipeline.
+direct te praten met een repository in plaats van via een service. De tests zorgen er gelukkig voor dat dit soort dingen aan het licht zouden komen in een pipeline.
 Er zijn echter ook fouten die minder duidelijk zijn en komen vanuit deze specifieke hexagonal stijl die wij toepassen. In de loop van de tijd kan het toepassen van deze architectuurstijl
 in een specifieke context best wel complex worden. Zeker wanneer er meerdere domeinen zijn waar meerdere developers aan werken, kunnen er subtiele fouten worden gemaakt. Pas bijvoorbeeld eens het volgende toe:
 
 - Voeg memberfield `CustomerResponseDto dto = null;` toe aan interface `CustomerApi` in de Customer domain inbound port laag (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
-- Voeg memberfield `private final SpringCustomerManager customerManager;` toe aan klasse `BookingSpringController` in de Booking inbound adapter laag.
+- Voeg memberfield `private final H2BookingRepository h2BookingRepository;` toe aan klasse `BookingSpringController` in de inbound adapter laag.
 
-  Run nu de tests. **Wat** faalt er **en waarom** zou je dat verwachten met deze architectuur?  
-  Maak aanpassingen aan de implementatie zodat de tests weer slagen.
+Run nu de `ArchUnitHexagonalTest` in de test directory en zie **Wat** er faalt **en waarom**.
+Zou je dat ook verwachten volgens de hexagonal architectuur?  
+Draai de aanpassingen aan de implementatie terug zodat de tests weer slagen.
 
 ## Stap 5: Booking uitbreiden met informatie vanuit het Customer domein
 
-We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in de `BookingPostDto` en `Booking` model. Terugkijkend naar de eerdere context map, zien we dat Booking downstream is van Customer. Deze bounded context afhankelijk gaan we laten terugkomen in de implementatie, het project reflecteert daarmee letterlijk 'de business'. We gaan dit ondersteunen door middel van `Spring modulith`.
+We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in de `BookingPostRequestDto` en `Booking` model. Terugkijkend naar de eerdere context map, zien we dat Booking downstream is van Customer. Deze bounded context afhankelijk gaan we laten terugkomen in de implementatie, het project reflecteert daarmee letterlijk 'de business'. We gaan dit ondersteunen door middel van `Spring modulith`.
 
 **A.** Analyseer `domain.inbound.port` in de `Customer` module. Je ziet hier een command en reply die is gemaakt voor de registratie command en 'event' uit het eerdere event storming diagram. We willen nu dat bij het aanmaken van een booking, dit command ook wordt uitgevoerd als onderdeel van de flow. Dit houdt in dat het telefoonnummer verkregen vanuit de dto en vervolgens het `NewBookingCommand` als payload wordt gebruikt om een customer id te verkijgen vanuit de custoemr module.
 
@@ -381,14 +382,14 @@ Het zou dan echter een refactor zijn op de domeinlaag, terwijl het eigenlijk een
 **C.** De ports van het booking domein moeten los blijven staan van de customer module, maak daarom een eigen versie van het command en reply aan in de `domain.outbound.port` package van de booking module met record klasses `GetOrCreateCustomerRequest`:
 
 ```java
-public record GetOrCreateCustomerRequest(String phoneNumber) {
+public record GetOrCreateCustomerRequest(String name, String phoneNumber) {
 }
 ```
 
 en `GetOrCreateCustomerResponse`:
 
 ```java
-public record GetOrCreateCustomerResponse(String customerId) {
+public record GetOrCreateCustomerResponse(UUID customerId) {
 }
 ```
 
@@ -396,7 +397,7 @@ public record GetOrCreateCustomerResponse(String customerId) {
 
 **E.** Breid dan ook nu met de tools van stappen c en d de `BookingService` in de `service` package uit ter realisatie van de volgende flow:
 
-1. Het customer telefoonnummer wordt gehaald uit het binnengekomen `NewBookingCommand` argument
+1. De customer naam en telefoonnummer worden gehaald uit het binnengekomen `NewBookingCommand` argument
 2. De `CustomerManager` wordt gebruikt om een `GetOrCreateCustomerRequest` te maken en te versturen
 3. Uit het response van de manager, pak je het customerId en maak je een `Booking` aan zoals eerder, maar dan met het verkregen customerId in plaats van een random UUID
 4. De booking wordt opgeslagen zoals eerder via de `BookingRepository`
@@ -444,20 +445,19 @@ Run nu nogmaals de `ModulithTest`, `verifyModules` zou nu moeten slagen.
 Een leuke feature van Modulith is dat er in de targer directory een puml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt? Het komt precies overeen met de eerdere context map!  
 ![Modulith modules overview](docs/assignment-diagrammen/modulith-generated-plaatje.png)
 
-## Stap 6: Validation en exception handling
-
-## Stap 7: CustomerManager Spring adapter vervangen door REST adapter
+## Stap 6: CustomerManager Spring adapter vervangen door REST adapter
 
 Als het customer domein op een gegeven moment geen onderdeel meer is van de Rebü applicatie, maar een losse applicati, dan zal deze via een andere API gekoppeld moeten worden.
 In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen. We gaan indirect de CustomerController gebruiken door met een REST client tegen onszelf te praten.
 We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `RestCustomerManager`.
 Merk op dat je bij deze refactoring geen logica in het booking domein hoeft aan te passen.
 
-**A.** Het REST API contract is als volgt: PUT op /customers/phoneNumber welke een dto terugstuurt met `id` als property. Deze gaan we nodig hebben als `customerId` property in `Booking`. Voor de SpringAdapter moesten we een command en reply mappen, maar hier moeten we dus mappen op de REST API.
+**A.** Het REST API contract is als volgt: PUT op /customers/phoneNumber welke een dto terugstuurt met ondere andere `id` als property. Deze gaan we nodig hebben als `customerId` property in `Booking`. Voor de SpringAdapter moesten we een command en reply mappen, maar hier moeten we dus mappen op de REST API.
 Maak daarom een `RestCustomerResponseDto` record klasse aan in de `adapter.outbound.manager.rest` package van Booking:
 
 ```java
 public record RestCustomerResponseDto(UUID id,
+                                      String name,
                                       String phoneNumber){
 }
 ```
@@ -479,11 +479,15 @@ Implmenteer nu de adapter door:
 
 1. `restClient.put()` te gebruiken voor een call naar localhost 8080
 2. Het endpoint is `/customers/{phoneNumber}` waarbij `phoneNumber` afkomstig is van de `GetOrCreateCustomerRequest`
-3. Parse de response via `RestCustomerResponseDto`
-4. Map de response naar `GetOrCreateCustomerResponse` via de mapper en return dit
+3. Een request body met `name` meesturen via `RestCustomerPostRequestDto`
+4. Parse de response via `RestCustomerResponseDto`
+5. Map de response naar `GetOrCreateCustomerResponse` via de mapper en return dit
 
 **C.** Voordat we deze adapter in runtime gaan gebruiken, check nog een keer of de tests die starten met `getAllCustomers` en `createNewBooking_ValidBooking_StoresBookingInDB` uit `FunctionalIT` nog steeds slagen.
 Is dat het geval, comment dan in `SpringCustomerManager` `@Component` uit. Voeg aan `RestCustomerManager` de annotatie `@Component` toe. Run de tests opnieuw, ze zouden nog steeds moeten slagen. Is dat het geval, dan heb je zonder problemen
 een technische implementatie vervangen, terwijl er op domeinniveau geen wijzigingen nodig waren!
 
 TODO: project eindstaat diagram hier
+
+
+## Stap 7: (optioneel) Validation en exception handling

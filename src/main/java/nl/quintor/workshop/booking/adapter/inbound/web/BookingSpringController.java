@@ -21,13 +21,15 @@ public class BookingSpringController {
     private final BookingApi bookingApi;
 
     @PostMapping
-    public ResponseEntity<BookingResponseDto> createNewBooking(@Valid @RequestBody BookingPostDto bookingPostDto) {
+    public ResponseEntity<BookingResponseDto> createNewBooking(
+            @Valid @RequestBody BookingPostRequestDto bookingPostRequestDto) {
         var newBookingCommand = new NewBookingCommand(
-                bookingPostDto.customerPhoneNumber(),
-                bookingPostDto.dateTime(),
-                bookingPostDto.fromLocation(),
-                bookingPostDto.toLocation(),
-                bookingPostDto.numberOfPassengers());
+                bookingPostRequestDto.customerName(),
+                bookingPostRequestDto.customerPhoneNumber(),
+                bookingPostRequestDto.dateTime(),
+                bookingPostRequestDto.fromLocation(),
+                bookingPostRequestDto.toLocation(),
+                bookingPostRequestDto.numberOfPassengers());
 
         Booking createdBooking = bookingApi.createBooking(newBookingCommand);
 

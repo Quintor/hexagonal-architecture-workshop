@@ -19,16 +19,10 @@ public class BookingEntity {
     @Id
     @GeneratedValue
     private UUID id;
-
     private UUID customerId;
-
     private LocalDateTime dateTime;
-
     private String fromLocation;
-
     private String toLocation;
-
     private byte numberOfPassengers;
-
     private BookingStatus status;
 }

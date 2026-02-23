@@ -49,7 +49,7 @@ class ArchUnitHexagonalTest {
     }
 
     // De domein inbound en outbound ports/types mogen niet elkaar gebruiken. Het is aan de service om ze allebei
-    // te gebruiken om domeinfunctionaliteiten (ook wel 'use cases') te implementeren.
+    // te gebruiken om domein functionaliteiten (ook wel 'use cases') te implementeren.
     @Test
     void domain_inbound_outbound_ports_should_only_depend_on_domain_models() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
