@@ -29,7 +29,7 @@ Inbound ports zijn ook wel bekend als primary of driving ports, terwijl outbound
 ### booking.domain.service
 Hier staat dus de implementatie van onze inbound port. Inbound ports implementaties wil je volledig loskoppelen van de gebruikte externe technologieën. Deze BookingService hoort dus geen idee te hebben dat de data wordt opgeslagen in een relationele database.
 
-Echter wordt het regelen van transacties wel significant meer werk als je ze hier helemaal buiten wilt laten, waardoor het soms schoorvoeten wordt toegestaan om @Transactional te gebruiken. Het liefst dan wel die van Jakarta Enterprise Edition, zodat je je niet aan Spring bindt.
+Echter wordt het regelen van transacties wel significant meer werk als je ze hier helemaal buiten wilt laten, waardoor het soms schoorvoetend wordt toegestaan om @Transactional te gebruiken. Het liefst dan wel die van Jakarta Enterprise Edition, zodat je je niet aan Spring bindt.
 
 ## booking.adapter
 De adapter layer/package bevat alles wat nodig is om de applicatie met de buitenwereld te verbinden, zoals:
