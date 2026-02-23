@@ -380,6 +380,11 @@ Run nu de `ArchUnitHexagonalTest` in de test directory en zie **Wat** er faalt *
 Zou je dat ook verwachten volgens de hexagonal architectuur?  
 Draai de aanpassingen aan de implementatie terug zodat de tests weer slagen.
 
+**C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`). De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken. Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test blijft runnen. Zo weet je precies wat je minimaal nodig hebt.
+
+Het volgende diagram laat zien wat we willen afwingen met de archunit-tests:  
+![ArchUnit package regels](docs/assignment-diagrammen/package-rules-overview.drawio.png)
+
 ## Stap 5: Booking uitbreiden met informatie vanuit het Customer domein
 
 We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in de `BookingPostRequestDto` en `Booking` model. Terugkijkend naar de eerdere context map, zien we dat Booking downstream is van Customer. Deze bounded context afhankelijk gaan we laten terugkomen in de implementatie, het project reflecteert daarmee letterlijk 'de business'. We gaan dit ondersteunen door middel van `Spring modulith`.
