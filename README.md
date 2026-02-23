@@ -11,6 +11,20 @@ Architecture.
 1. Hoe kan je op een onderhoudbare manier een grote applicatie neerzetten?
 2. Het explicieter toepassen van bekende concepten door te communiceren in termen van patterns (DI, IoC, etc.)
 
+# Onboarding
+
+**Vereiste software:**
+
+- JDK 17
+- Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)
+
+**Download de code van:** TODO: main of specifieke branch?  
+**Opschonen van gecompileerde bestanden:** `mvn clean`  
+**Runnen van alle tests:** `mvn verify`
+
+Gebruik je de automatische run configuratie van een IDE en loop je tegen problemen aan?  
+Gooi dan altijd eerst de /target directory weg en probeer het opnieuw om zeker te weten dat er geen oude gecompileerde bestanden in de weg zitten.
+
 # De opdracht
 
 We gaan een deel van een taxibedrijf casus uitwerken in een bestaand project in hexagonale architectuur en modulaire monoliet stijl.
