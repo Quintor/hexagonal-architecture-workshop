@@ -55,10 +55,10 @@ We pakken hierbij de "aanvraag indienen" en "klant registreren" commands.
 Meegeleverd op de workshop starter branch is een Java Spring Modulith project met een geïmplementeerde `customer` module en package opzet van de `booking` module.
 In de `customer` module zijn er een tweetal REST endpoints beschikbaar en een Modulith named interface `CustomerApi` die registratie functionaliteit beschikbaar stelt die we gaan gebruiken in de Booking module later in de workshop.
 
-![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.svg)
+![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.png)
 
 Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl. De packagestructuur ziet er als volgt uit:  
-![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.svg)
+![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.png)
 
 ## Stap 1: Implementeren van het Booking domein
 
@@ -71,7 +71,7 @@ We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.b
 
 **A.** Maak een `Booking` en `BookingStatus` klasse aan in de `model` package met properties op basis het onderstaande diagram.
 Maak van het model een lombok value en builder klasse.  
-![Booking domain model](docs/ddd-domain-model.drawio.svg)
+![Booking domain model](docs/ddd-domain-model.drawio.png)
 
 ```java
 
@@ -173,7 +173,7 @@ Het is dan minder toepasselijk om een mapper te maken die command naar booking o
 Daarom maken we hier deze keuze om programmatisch NewBookingCommand om te zetten.
 
 Als het goed is, ziet de implementatie van het domein binnen de booking module er nu als volgt uit:  
-![Booking domein](docs/assignment-diagrammen/booking-domain-packages.drawio.svg)
+![Booking domein](docs/assignment-diagrammen/booking-domain-packages.drawio.png)
 
 ## Stap 2: Booking persistentie
 
@@ -252,7 +252,7 @@ public class H2BookingRepository implements BookingRepository {
 ```
 
 Als het goed is ziet het project er nu als volgt uit en hebben we onze eerste outbound adapter geïmplementeerd die de technische implementatie heeft ontkoppeld van de domeinlogica:
-![Booking domein met persistence adapter](docs/assignment-diagrammen/booking-domain-plus-persistence.drawio.svg)
+![Booking domein met persistence adapter](docs/assignment-diagrammen/booking-domain-plus-persistence.drawio.png)
 
 ## Stap 3: Booking REST API
 
@@ -334,7 +334,7 @@ public class BookingSpringController {
 ```
 
 **C.** Als het goed is, ziet het project er nu als volgt uit en hebben we onze eerste inbound adapter geïmplementeerd die de technische implementatie heeft ontkoppeld van de domeinlogica:  
-![Booking domein met persistence en web adapter](docs/assignment-diagrammen/booking-domein-plus-persistence-en-web.drawio.svg)
+![Booking domein met persistence en web adapter](docs/assignment-diagrammen/booking-domain-plus-persistence.drawio-en-web.drawio.png)
 
 **Hoe zit het nu met Spring bean management?**  
 We hebben nu in de adapter laag beans gemaakt met de gebruikelijke Spring annotaties.
