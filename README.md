@@ -56,8 +56,31 @@ We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.b
 - `service` bevat de implementatie van de business logica van het domein, is afhankelijk van de Port.outbound interfaces en implementeert de Port.inbound interfaces
 
 **A.** Maak een `Booking` en `BookingStatus` klasse aan in de `model` package met properties op basis het onderstaande diagram.
-Maak van het model een lombok `@Value @AllArgsConstructor @Builder` klasse.  
+Maak van het model een lombok value en builder klasse.  
 ![Booking domain model](docs/ddd-domain-model.drawio.svg)
+
+```java
+
+@Value
+@AllArgsConstructor
+@Builder
+public class Booking {
+    UUID id;
+    UUID customerId;
+    LocalDateTime dateTime;
+    String fromLocation;
+    String toLocation;
+    byte numberOfPassengers;
+    @Default
+    BookingStatus status = BookingStatus.NEW;
+}
+
+public enum BookingStatus {
+    NEW,
+    ACCEPTED,
+    CONFIRMED
+}
+```
 
 **B.** We willen uiteindelijk een boeking in een relationele database opslaan, maar in het domein willen we niet van technische implementatie afhankelijk zijn.
 Er moet echter wel een interface beschikbaar komen waarop we een actie voor het opslaan van het zojuist aangemaakte booking model kunnen uitvoeren.
@@ -67,9 +90,6 @@ In stap 2 zullen we hiervoor een outbound adapter voor implementeren.
 **Met uitzondering van de `model` package, mag de interface geen andere dependencies hebben op andere packages.**
 
 ```java
-package nl.quintor.workshop.booking.domain.port.outbound;
-import nl.quintor.workshop.booking.domain.model.Booking;
-
 public interface BookingRepository {
     Booking save(Booking booking);
 }
@@ -79,9 +99,6 @@ public interface BookingRepository {
 Maak een `NewBookingCommand` record aan in de `port.inbound` package:
 
 ```java
-package nl.quintor.workshop.booking.domain.port.inbound;
-import java.time.LocalDateTime;
-
 public record NewBookingCommand(String customerName, String customerPhoneNumber, LocalDateTime dateTime, String fromLocation, String toLocation, byte numberOfPassengers) {}
 ```
 
@@ -96,9 +113,6 @@ Maak een `BookingApi` interface aan in de `port.inbound` package met een methode
 **Met uitzondering van de `model` package, mag de interface geen andere dependencies hebben op andere packages.**
 
 ```java
-package nl.quintor.workshop.booking.domain.port.inbound;
-import nl.quintor.workshop.booking.domain.model.Booking;
-
 public interface BookingApi {
     Booking createBooking(NewBookingCommand command);
 }
@@ -115,16 +129,6 @@ Voeg de lombok `@AllArgsConstructor` annotatie toe aan de klasse zodat we later 
 **Optioneel: meer weten over "ports", zie ['Definition of Inbound and Outbound Ports'](https://scalastic.io/en/hexagonal-architecture-domain/#1-definition-of-inbound-and-outbound-ports) (5 min)**
 
 ```java
-package nl.quintor.workshop.booking.domain.service;
-
-import lombok.RequiredArgsConstructor;
-import nl.quintor.workshop.booking.domain.model.Booking;
-import nl.quintor.workshop.booking.domain.port.inbound.BookingApi;
-import nl.quintor.workshop.booking.domain.port.inbound.NewBookingCommand;
-import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
-import nl.quintor.workshop.booking.domain.port.outbound.CustomerManager;
-import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
-
 @RequiredArgsConstructor
 public class BookingService implements BookingApi {
     private final BookingRepository bookingRepository;
@@ -133,7 +137,8 @@ public class BookingService implements BookingApi {
     @Override
     public Booking createBooking(NewBookingCommand command) {
 
-        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerPhoneNumber());
+        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerName(),
+                command.customerPhoneNumber());
         var customerServiceResponse = customerManager.getOrCreateCustomer(customerServiceRequest);
 
         var booking = Booking.builder()
@@ -488,6 +493,5 @@ Is dat het geval, comment dan in `SpringCustomerManager` `@Component` uit. Voeg 
 een technische implementatie vervangen, terwijl er op domeinniveau geen wijzigingen nodig waren!
 
 TODO: project eindstaat diagram hier
-
 
 ## Stap 7: (optioneel) Validation en exception handling
