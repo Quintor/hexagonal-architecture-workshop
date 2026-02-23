@@ -87,6 +87,10 @@ class ArchUnitHexagonalTest {
         outboundRules.check(importedClasses);
     }
 
+    // Anders dan de voorgaande tests, worden hier dependencies 'black listed' in plaats van 'white listed' zoals de
+    // bovenstaande tests. Dit omdat de adapter laag van heel veel zaken afhankelijk mag zijn, maar we willen voorkomen
+    // dat er een directe afhankelijkheid ontstaat tussen de inbound en outbound ports en adapters.
+    // Deze manier zorgt voor een water overzichtelijkere test 
     @Test
     void inbound_outbound_adapters_can_depend_on_anything_but_not_each_other() {
         JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");

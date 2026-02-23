@@ -361,7 +361,7 @@ Aan de overige testen gaan we nog werken.
 ## Stap 4: architectuur validatie met ArchUnit
 
 **ArchUnit**  
-We hebben in de workshop al veel keuzes gemaakt op het gebied van de software architectuur, maar hoe zorgen we ervoor dat deze ook daadwerkelijk worden nageleefd?
+We hebben in de workshop al veel keuzes gemaakt op het gebied van de softwarearchitectuur, maar hoe zorgen we ervoor dat deze ook daadwerkelijk worden nageleefd?
 [ArchUnit](https://www.archunit.org) kan ons daarbij helpen.
 Het is een test library die helpt bij het afdwingen van architectuurregels zodat we die automatisch kunnen valideren.
 
@@ -369,18 +369,23 @@ Het is een test library die helpt bij het afdwingen van architectuurregels zodat
 want we hebben in de voorgaande stappen de regels van deze tests opgevolgd en de beginstaat van het project ook en daarmee voldaan aan de architectuur.
 
 **B.** Er zijn natuurlijk foutjes die je kan maken die vrij duidelijk zijn, zoals het gebruiken van een service in een model of in een controller
-direct te praten met een repository in plaats van via een service. De tests zorgen er gelukkig voor dat dit soort dingen aan het licht zouden komen in een pipeline.
-Er zijn echter ook fouten die minder duidelijk zijn en komen vanuit deze specifieke hexagonal stijl die wij toepassen. In de loop van de tijd kan het toepassen van deze architectuurstijl
-in een specifieke context best wel complex worden. Zeker wanneer er meerdere domeinen zijn waar meerdere developers aan werken, kunnen er subtiele fouten worden gemaakt. Pas bijvoorbeeld eens het volgende toe:
-
-- Voeg memberfield `CustomerResponseDto dto = null;` toe aan interface `CustomerApi` in de Customer domain inbound port laag (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
-- Voeg memberfield `private final H2BookingRepository h2BookingRepository;` toe aan klasse `BookingSpringController` in de inbound adapter laag.
+direct te praten met een repository in plaats van via een service. In de praktijk is de kans groot dat dit naar voren komt bij code review. Maar hoe fijn is het
+als we hier ook testautomatisering als achtervang hebben! Zeker met de toepassing van de hexagonal stijl, zijn er behoorlijk wat meer richtingen om op te kunnen gaan
+qua dependencies. Om archunit in de pipelines te laten draaien maakt een mooie stok achter de deur. Laten we eens kijken wat er gebeurt als we een aantal foutieve
+dependencies toepassen (in de Booking module):  
+- Voeg member field `BookingReponse dto = null;` toe aan interface `BookingApi` in `domain.port.inbound` (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
+- Voeg member field `private final H2BookingRepository h2BookingRepository;` toe aan klasse `BookingSpringController` in de inbound adapter laag.
 
 Run nu de `ArchUnitHexagonalTest` in de test directory en zie **Wat** er faalt **en waarom**.
 Zou je dat ook verwachten volgens de hexagonal architectuur?  
 Draai de aanpassingen aan de implementatie terug zodat de tests weer slagen.
 
-**C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`). De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken. Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test blijft runnen. Zo weet je precies wat je minimaal nodig hebt.
+**C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`). 
+De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter 
+inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken.   
+
+Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test 
+blijft runnen. Zo weet je precies wat je minimaal nodig hebt.
 
 Het volgende diagram laat zien wat we willen afwingen met de archunit-tests:  
 ![ArchUnit package regels](docs/assignment-diagrammen/package-rules-overview.drawio.png)
