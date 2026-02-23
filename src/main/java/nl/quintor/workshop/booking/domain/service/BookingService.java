@@ -8,7 +8,6 @@ import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerManager;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 import nl.quintor.workshop.common.domain.exception.DomainValidationException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -18,7 +17,6 @@ public class BookingService implements BookingApi {
     private final CustomerManager customerManager;
 
     @Override
-    @Transactional
     public Booking createBooking(NewBookingCommand command) {
         validateBookingLocations(command);
 

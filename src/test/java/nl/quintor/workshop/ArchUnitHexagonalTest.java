@@ -43,8 +43,7 @@ class ArchUnitHexagonalTest {
                         "..domain..",
                         "java..",
                         "lombok..",
-                        "org.springframework.validation..",
-                        "org.springframework.transaction..");
+                        "org.springframework.validation..");
 
         rule.check(importedClasses);
     }
@@ -67,8 +66,7 @@ class ArchUnitHexagonalTest {
                         "..domain..port.inbound..",
                         "java..",
                         "lombok..",
-                        "jakarta.validation..",
-                        "org.springframework.transaction..");
+                        "jakarta.validation..");
 
         inboundRules.check(importedClasses);
 
@@ -84,8 +82,7 @@ class ArchUnitHexagonalTest {
                         "..domain..port.outbound..",
                         "java..",
                         "lombok..",
-                        "jakarta.validation..",
-                        "org.springframework.transaction..");
+                        "jakarta.validation..");
 
         outboundRules.check(importedClasses);
     }
