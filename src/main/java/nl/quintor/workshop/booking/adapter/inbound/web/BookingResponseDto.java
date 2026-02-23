@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record BookingResponseDto(
-        UUID bookingId,
-        UUID customerId,
-        LocalDateTime dateTime,
-        String fromLocation,
-        String toLocation,
-        byte numberOfPassengers,
-        BookingStatus status) {
+                UUID bookingId,
+                UUID customerId,
+                LocalDateTime dateTime,
+                String fromLocation,
+                String toLocation,
+                byte passengerAmount,
+                BookingStatus status) {
 }

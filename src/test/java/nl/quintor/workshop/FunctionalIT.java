@@ -53,7 +53,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Apeldoorn",
-                                    "numberOfPassengers": 2
+                                    "passengerAmount": 2
                                 }
                                 """;
 
@@ -65,7 +65,7 @@ class FunctionalIT {
 
                 // Assert
                 Object[] bookingData = (Object[]) transactionTemplate.execute(status -> entityManager.createQuery(
-                                "SELECT b.fromLocation, b.toLocation, b.numberOfPassengers FROM BookingEntity b")
+                                "SELECT b.fromLocation, b.toLocation, b.passengerAmount FROM BookingEntity b")
                                 .getSingleResult());
 
                 assertEquals("Amersfoort", bookingData[0]);
@@ -84,7 +84,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Amersfoort",
-                                    "numberOfPassengers": 2
+                                    "passengerAmount": 2
                                 }
                                 """;
 
@@ -111,7 +111,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Apeldoorn",
-                                    "numberOfPassengers": 1
+                                    "passengerAmount": 1
                                 }
                                 """;
 
@@ -138,7 +138,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Apeldoorn",
-                                    "numberOfPassengers": 1
+                                    "passengerAmount": 1
                                 }
                                 """;
 
@@ -149,7 +149,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Apeldoorn",
-                                    "numberOfPassengers": 2
+                                    "passengerAmount": 2
                                 }
                                 """;
 
@@ -182,7 +182,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Apeldoorn",
-                                    "numberOfPassengers": 1
+                                    "passengerAmount": 1
                                 }
                                 """;
 
@@ -193,7 +193,7 @@ class FunctionalIT {
                                     "dateTime": "2026-01-01T00:00:00",
                                     "fromLocation": "Amersfoort",
                                     "toLocation": "Apeldoorn",
-                                    "numberOfPassengers": 2
+                                    "passengerAmount": 2
                                 }
                                 """;
 

@@ -70,7 +70,7 @@ public class Booking {
     LocalDateTime dateTime;
     String fromLocation;
     String toLocation;
-    byte numberOfPassengers;
+    byte passengerAmount;
     @Default
     BookingStatus status = BookingStatus.NEW;
 }
@@ -99,7 +99,7 @@ public interface BookingRepository {
 Maak een `NewBookingCommand` record aan in de `port.inbound` package:
 
 ```java
-public record NewBookingCommand(String customerName, String customerPhoneNumber, LocalDateTime dateTime, String fromLocation, String toLocation, byte numberOfPassengers) {}
+public record NewBookingCommand(String customerName, String customerPhoneNumber, LocalDateTime dateTime, String fromLocation, String toLocation, byte passengerAmount) {}
 ```
 
 Hoewel de `Booking` domeinklasse een `customerId` bevat, willen we in onze functionaliteit voor het aanmaken van een booking niet een customer id ontvangen.
@@ -146,7 +146,7 @@ public class BookingService implements BookingApi {
                 .toLocation(command.toLocation())
                 .fromLocation(command.fromLocation())
                 .dateTime(command.dateTime())
-                .numberOfPassengers(command.numberOfPassengers())
+                .passengerAmount(command.passengerAmount())
                 .build();
 
         return bookingRepository.save(booking);
@@ -188,7 +188,7 @@ public class BookingEntity {
     private LocalDateTime dateTime;
     private String fromLocation;
     private String toLocation;
-    private byte numberOfPassengers;
+    private byte passengerAmount;
     private BookingStatus status;
 }
 ```
@@ -265,7 +265,7 @@ public record BookingPostRequestDto(String customerName,
                              LocalDateTime dateTime,
                              String fromLocation,
                              String toLocation,
-                             byte numberOfPassengers) {
+                             byte passengerAmount) {
 }
 ```
 
@@ -278,7 +278,7 @@ public record BookingResponseDto(
         LocalDateTime dateTime,
         String fromLocation,
         String toLocation,
-        byte numberOfPassengers,
+        byte passengerAmount,
         BookingStatus status) {
 }
 ```
@@ -301,7 +301,7 @@ public class BookingSpringController {
                 bookingPostRequestDto.dateTime(),
                 bookingPostRequestDto.fromLocation(),
                 bookingPostRequestDto.toLocation(),
-                bookingPostRequestDto.numberOfPassengers());
+                bookingPostRequestDto.passengerAmount());
 
         Booking createdBooking = bookingApi.createBooking(newBookingCommand);
 

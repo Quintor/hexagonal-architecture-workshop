@@ -29,7 +29,7 @@ public class BookingService implements BookingApi {
                 .toLocation(command.toLocation())
                 .fromLocation(command.fromLocation())
                 .dateTime(command.dateTime())
-                .numberOfPassengers(command.numberOfPassengers())
+                .passengerAmount(command.passengerAmount())
                 .build();
 
         return bookingRepository.save(booking);

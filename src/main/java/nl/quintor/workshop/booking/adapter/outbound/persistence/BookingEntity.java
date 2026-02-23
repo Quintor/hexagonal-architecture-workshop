@@ -23,6 +23,6 @@ public class BookingEntity {
     private LocalDateTime dateTime;
     private String fromLocation;
     private String toLocation;
-    private byte numberOfPassengers;
+    private byte passengerAmount;
     private BookingStatus status;
 }

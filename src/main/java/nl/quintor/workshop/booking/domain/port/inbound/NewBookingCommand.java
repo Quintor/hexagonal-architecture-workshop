@@ -12,5 +12,5 @@ public record NewBookingCommand(
         @NotNull(message = "Date and time is required") LocalDateTime dateTime,
         @NotBlank(message = "From location is required") String fromLocation,
         @NotBlank(message = "To location is required") String toLocation,
-        @Positive(message = "Number of passengers must be positive") byte numberOfPassengers) {
+        @Positive(message = "Number of passengers must be positive") byte passengerAmount) {
 }

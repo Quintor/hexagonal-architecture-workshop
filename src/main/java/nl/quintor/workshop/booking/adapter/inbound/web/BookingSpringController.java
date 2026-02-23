@@ -29,7 +29,7 @@ public class BookingSpringController {
                 bookingPostRequestDto.dateTime(),
                 bookingPostRequestDto.fromLocation(),
                 bookingPostRequestDto.toLocation(),
-                bookingPostRequestDto.numberOfPassengers());
+                bookingPostRequestDto.passengerAmount());
 
         Booking createdBooking = bookingApi.createBooking(newBookingCommand);
 
@@ -39,7 +39,7 @@ public class BookingSpringController {
                 createdBooking.getDateTime(),
                 createdBooking.getFromLocation(),
                 createdBooking.getToLocation(),
-                createdBooking.getNumberOfPassengers(),
+                createdBooking.getPassengerAmount(),
                 createdBooking.getStatus());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
