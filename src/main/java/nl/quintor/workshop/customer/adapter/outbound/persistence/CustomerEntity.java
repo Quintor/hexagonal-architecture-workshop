@@ -19,7 +19,7 @@ public class CustomerEntity {
     @Id
     @GeneratedValue
     private UUID id;
-    private String email;
+    private String name;
     private String phoneNumber;
     private String status;
 }

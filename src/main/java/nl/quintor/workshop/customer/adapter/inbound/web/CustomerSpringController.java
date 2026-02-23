@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -27,11 +28,13 @@ public class CustomerSpringController {
         }
 
         @PutMapping("/{phoneNumber}")
-        public ResponseEntity<CustomerResponseDto> getOrCreateCustomer(@PathVariable String phoneNumber) {
-                var command = new GetOrCreateCustomerCommand(phoneNumber);
+        public ResponseEntity<CustomerResponseDto> getOrCreateCustomer(
+                        @PathVariable String phoneNumber,
+                        @Valid @RequestBody CustomerPostRequestDto requestDto) {
+                var command = new GetOrCreateCustomerCommand(requestDto.name(), phoneNumber);
                 var reply = customerApi.getOrCreateCustomer(command);
-                var responseDto = new CustomerResponseDto(reply.customerId(), reply.phoneNumber());
-              
+                var responseDto = new CustomerResponseDto(reply.customerId(), reply.name(), reply.phoneNumber());
+
                 return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
 }

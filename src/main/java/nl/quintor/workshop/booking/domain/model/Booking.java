@@ -17,7 +17,7 @@ public class Booking {
     LocalDateTime dateTime;
     String fromLocation;
     String toLocation;
-    byte numberOfPassengers;
+    byte passengerAmount;
     @Default
     BookingStatus status = BookingStatus.NEW;
 }

@@ -8,7 +8,6 @@ import nl.quintor.workshop.booking.domain.port.outbound.BookingRepository;
 import nl.quintor.workshop.booking.domain.port.outbound.CustomerManager;
 import nl.quintor.workshop.booking.domain.port.outbound.GetOrCreateCustomerRequest;
 import nl.quintor.workshop.common.domain.exception.DomainValidationException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
@@ -18,11 +17,11 @@ public class BookingService implements BookingApi {
     private final CustomerManager customerManager;
 
     @Override
-    @Transactional
-    public Booking newBooking(NewBookingCommand command) {
+    public Booking createBooking(NewBookingCommand command) {
         validateBookingLocations(command);
 
-        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerPhoneNumber());
+        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerName(),
+                command.customerPhoneNumber());
         var customerServiceResponse = customerManager.getOrCreateCustomer(customerServiceRequest);
 
         var booking = Booking.builder()
@@ -30,7 +29,7 @@ public class BookingService implements BookingApi {
                 .toLocation(command.toLocation())
                 .fromLocation(command.fromLocation())
                 .dateTime(command.dateTime())
-                .numberOfPassengers(command.numberOfPassengers())
+                .passengerAmount(command.passengerAmount())
                 .build();
 
         return bookingRepository.save(booking);

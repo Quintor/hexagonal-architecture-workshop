@@ -9,7 +9,7 @@ import java.util.UUID;
 @Builder
 public class Customer {
     UUID id;
-    String email;
+    String name;
     String phoneNumber;
 
     @Builder.Default
