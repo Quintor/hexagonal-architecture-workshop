@@ -57,9 +57,9 @@ We gaan beginnen met de domeinlaag van de Booking module (`nl.quintor.workshop.b
 
 **A.** Maak een `Booking` en `BookingStatus` klasse aan in de `model` package met properties op basis het onderstaande diagram.
 Maak van het model een lombok `@Value @AllArgsConstructor @Builder` klasse.  
-![Booking domain model](docs/ddd-domain-model.drawio.svg)  
+![Booking domain model](docs/ddd-domain-model.drawio.svg)
 
-```java
+````java
 
 
 **B.** We willen uiteindelijk een boeking in een relationele database opslaan, maar in het domein willen we niet van technische implementatie afhankelijk zijn.
@@ -76,7 +76,7 @@ import nl.quintor.workshop.booking.domain.model.Booking;
 public interface BookingRepository {
     Booking save(Booking booking);
 }
-```
+````
 
 **C.** Nu gaan we de inbound port, welke de API van het domein beschrijft, definiëren.
 Maak een `NewBookingCommand` record aan in de `port.inbound` package:
@@ -172,6 +172,24 @@ Het model willen we voor de loskoppeling van database technologie dan ook zo hou
 We hebben echter wel een entity variant nodig van `Booking` klasse die wél JPA-annotaties heeft.
 Kopieer `Booking` als `BookingEntity` naar `adapter.outbound.persistence` en voeg de JPA-annotaties `@Entity, @Id & @GeneratedValue` toe op de gepaste plaatsen.
 Verander de Lombok `@Value` annotatie in `@Data` zodat dat de entity manager dynamisch de objecten kan aanpassen.
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class BookingEntity {
+    @Id
+    @GeneratedValue
+    private UUID id;
+    private UUID customerId;
+    private LocalDateTime dateTime;
+    private String fromLocation;
+    private String toLocation;
+    private byte numberOfPassengers;
+    private BookingStatus status;
+}
+```
 
 **B.** Zoals je wellicht weet van Spring Data JPA-repositories, moet er een interface worden aangemaakt die overerft van `JpaRepository`.
 Maak daarom de onderstaande `SpringDataBookingRepository` interface aan voor het opslaan van de `BookingEntity`.
