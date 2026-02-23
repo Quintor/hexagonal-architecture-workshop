@@ -31,8 +31,12 @@ public class CustomerSpringController {
         public ResponseEntity<CustomerResponseDto> getOrCreateCustomer(
                         @PathVariable String phoneNumber,
                         @Valid @RequestBody CustomerPostRequestDto requestDto) {
+                log.info("[getOrCreateCustomer] called met: naam={}, telefoon={}", requestDto.name(), phoneNumber);
+        
                 var command = new GetOrCreateCustomerCommand(requestDto.name(), phoneNumber);
                 var reply = customerApi.getOrCreateCustomer(command);
+               
+                log.info("[getOrCreateCustomer] Customer processed met ID: {}", reply.customerId());
                 var responseDto = new CustomerResponseDto(reply.customerId(), reply.name(), reply.phoneNumber());
 
                 return ResponseEntity.status(HttpStatus.OK).body(responseDto);

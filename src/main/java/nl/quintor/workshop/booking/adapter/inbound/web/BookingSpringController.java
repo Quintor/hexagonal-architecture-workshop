@@ -23,6 +23,11 @@ public class BookingSpringController {
     @PostMapping
     public ResponseEntity<BookingResponseDto> createNewBooking(
             @Valid @RequestBody BookingPostRequestDto bookingPostRequestDto) {
+        log.info("Boeking aanvraag ontvangen: klant={}, van={}, naar={}", 
+                bookingPostRequestDto.customerName(), 
+                bookingPostRequestDto.fromLocation(), 
+                bookingPostRequestDto.toLocation());
+                
         var newBookingCommand = new NewBookingCommand(
                 bookingPostRequestDto.customerName(),
                 bookingPostRequestDto.customerPhoneNumber(),
@@ -32,6 +37,7 @@ public class BookingSpringController {
                 bookingPostRequestDto.passengerAmount());
 
         Booking createdBooking = bookingApi.createBooking(newBookingCommand);
+        log.info("Boeking succesvol aangemaakt met ID: {}", createdBooking.getId());
 
         var responseDto = new BookingResponseDto(
                 createdBooking.getId(),
