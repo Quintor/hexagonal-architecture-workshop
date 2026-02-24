@@ -3,7 +3,7 @@
 Het toepassen van een modulaire applicatie waarbinnen een hexagonal architecture gebruikt wordt zorgt ervoor dat:
 
 1. De applicatie 10 jaar of langer mee kan, wijzigingen moeten zo makkelijk als mogelijk zijn
-2. De business logica geisoleerd wordt, dus verandering in infrastructuur en manieren van het ontsluiten van de
+2. De business logica geïsoleerd wordt, dus verandering in infrastructuur en manieren van het ontsluiten van de
    applicatie vereisen geen wijzigingen in de business logica
 3. Het businessdomein expliciet duidelijk wordt, het domein is breder dan je eigen database
 
