@@ -67,7 +67,7 @@ In de `customer` module zijn er een tweetal REST endpoints beschikbaar en een Mo
 
 Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl. De packagestructuur ziet er als volgt uit:  
 ![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.png)  
-Meer vooraf eerst lezen over deze opzet, zie [Hexagonal.md](docs/hexagonal.md).
+Meer vooraf eerst lezen over deze opzet?, zie [Hexagonal.md](docs/hexagonal.md).
 
 ## Stap 1: Implementeren van het Booking domein
 
