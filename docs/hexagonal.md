@@ -1,46 +1,47 @@
-# Hexagonal packages/lagen
-Een hexagonal architecture bestaat uit diverse lagen met elk zijn eigen verantwoordelijkheden, hieronder wordt
-per laag uitgewerkt wat deze verantwoordelijkheden zijn.
+# Hexagonal Architecture
 
-## application
-De laag waarin je applicatie-logica leeft, losgekoppeld van technische details zoals databases, web frameworks of externe services.
+Het toepassen van een modulaire applicatie waarbinnen een hexagonal architecture gebruikt wordt zorgt ervoor dat:
 
-Vanuit deze laag orkestreren we use cases (bijv. “plaats bestelling”, “registreer gebruiker”). 
+1. De applicatie 10 jaar of langer mee kan, wijzigingen moeten zo makkelijk als mogelijk zijn
+2. De business logica geïsoleerd wordt, dus verandering in infrastructuur en manieren van het ontsluiten van de
+   applicatie vereisen geen wijzigingen in de business logica
+3. Het businessdomein expliciet duidelijk wordt, het domein is breder dan je eigen database
 
-### application.service
-De services in deze laag zijn verantwoordelijk voor:
+# layers
+In een hexagonal architecture spelen twee lagen de hoofdrol. Dit zijn de 'Inside' en de 'Outside'.
+De binnenkant bevat het domein en de business logica. Dit zou ook verder gescheiden kunnen worden.
+De buitenkant bevat de 'Adapters', die leggen de connecties met de buitenwereld, zoals binnenkomende HTTP requests of queries naar databases.
+En de binnenkant heeft geen idee hoe die buitenkant doet wat die doet.
 
-* Aanroepen domein logica
-* Aanroepen ports voor ophalen en opslaan data
-* Technische transacties (JTA)
+Hieronder gaan we alle packages van het domein Booking langs om uit te leggen wat de rol is in een Hexagonal Architecture.
 
-## domain
-De domeinlaag bevat de businesslogica van je systeem. Het is volledig onafhankelijk van frameworks, databases, of infrastructuur. Hier leef de kern van wat je applicatie eigenlijk doet, los van hoe het wordt gepresenteerd of opgeslagen.
-Met andere woorden: als alles buiten de domeinlaag zou verdwijnen (REST API, frontend, database), zou de domeinlaag nog steeds logisch kloppen.
+## booking.domain
+Deze package gaat over de binnenkant, losgekoppeld van technische details zoals databases, web frameworks of externe services. Met andere woorden: als alles buiten de domeinlaag zou verdwijnen (REST API, frontend, database), zou de domeinlaag nog steeds logisch kloppen.
+Hier vinden we de domeinobjecten, de business logica en de _ports_.
 
-### domain.service
-Services in de domeinlaag zijn verantwoordelijk voor businesslogica die niet natuurlijk bij een enkele entity past.
-Bijvoorbeeld: een PaymentService dat betalingen verwerkt tussen orders en accounts.
+De business logica en de ports staan in de praktijk vaak in een aparte 'application' laag, die nog weer om het domain heen zit. Dit is geen expliciet onderdeel van Hexagonal architecture en daarom staat het hier niet in.
 
-Kenmerken zijn:
-* Ze moeten onafhankelijk zijn van infrastructuur en ook van use cases.
-* Ze werken alleen met de data die aan hen wordt doorgegeven.
-
-### domain.repository
-De repository laag binnen het domein is enkel bedoeld voor het beschikbaar stellen van een Port welke door de application layer gebruikt kan worden voor ophalen en opslaan van data.
-
-De infrastructuur laag implementeert vervolgens deze port. Het interface zegt dat het iets kan ophalen en opslaan, maar weet 
-niet hoe dat gedaan wordt.
-
-### domain.model
+### booking.domain.model
 Het domeinmodel is een conceptueel model van de business:
 Het beschrijft domein objecten, relaties en regels.
+Je kan ze vergelijken met de bekende JPA entiteiten, behalve dat deze objecten géén link hebben met externe technologieën.
+Ze hebben properties en logica om zichzelf te valideren. 
+Op het gebied van identity wordt er vaak met UUID's gewerkt. Dit komt doordat als je werkt met database gegenereerde ID's in het domein model, je een afhankelijkheid op een externe technologie introduceert. 
 
-Belangrijk is dat de domain laag geen JPA entiteiten bevat, dat is namelijk een implementatie detail welke
-in de infrastructuur thuis hoort.
+### booking.domain.port
+Ports zijn contracten waarmee het domein aangeeft: "Dit is hoe ik met de buitenwereld ga praten"
+De inbound ports gaan over binnenkomende communicatie, terwijl de outbound ports gaan over wat het domein bijvoorbeeld met data wil kunnen doen.
+De implementatie van de inbound ports staat in booking.domain.service, terwijl implementaties van de outbound ports in booking.adapter.outbound staan.
 
-## infrastructure
-De infrastructuurlaag (of adapters layer) bevat alles wat nodig is om de applicatie met de buitenwereld te verbinden, zoals:
+Inbound ports zijn ook wel bekend als primary of driving ports, terwijl outbound ports ook secondary of driven ports kunnen heten.
+
+### booking.domain.service
+Hier staat dus de implementatie van onze inbound port. Inbound ports implementaties wil je volledig loskoppelen van de gebruikte externe technologieën. Deze BookingService hoort dus geen idee te hebben dat de data wordt opgeslagen in een relationele database.
+
+Echter wordt het regelen van transacties wel significant meer werk als je ze hier helemaal buiten wilt laten, waardoor het soms schoorvoetend wordt toegestaan om @Transactional te gebruiken. Het liefst dan wel die van Jakarta Enterprise Edition, zodat je je niet aan Spring bindt.
+
+## booking.adapter
+De adapter layer/package bevat alles wat nodig is om de applicatie met de buitenwereld te verbinden, zoals:
 
 * Database (JPA, MongoDB, SQL, NoSQL)
 * Web frameworks / REST controllers
@@ -48,35 +49,17 @@ De infrastructuurlaag (of adapters layer) bevat alles wat nodig is om de applica
 * Externe API’s / third-party services
 * Bestandssystemen, caching, logging
 
-## infrastructure.adapters
-Een adapter is een concrete implementatie van een port naar de buitenwereld. Ze vertaalt de abstracties van de kernlaag (domain + application) naar een specifieke technologie.
 Zonder adapters zou je applicatie niet met databases, APIs of messaging systemen kunnen praten.
 
-## infrastructure.adapters.inbound
-De inbound adapters (ook wel primary genoemd) zijn de adapters voor inkomende triggers zoals een REST call of een Kafka event.
-Deze adapter is verantwoordelijk voor de techniek die nodig voor het ontvangen van het bericht en de vertaling 
-van de inhoud van het bericht naar het domein model.
+### booking.adapter.inbound.web
+Deze package bevat een adapter. In dit geval een adapter om HTTP requests op te kunnen vangen. Om te kunnen praten met het domein wordt de BookingApi port uit booking.domain.port.inbound geïmporteerd.
+Verder staan hier ook de DTO's.
 
-## infrastructure.adapters.outbound
-De outbound adapters (ook wel secondary genoemd) zijn de adapters voor uitgaand verkeer zoals een REST call of interactie
-met een database.
+### booking.adapter.outbound.persistence
+Dit bevat de adapter die de outbound port BookingRepository uit booking.domain.port.outbound implementeert. Ook is hier een JPA entity variant van het domein object voor de Booking. Om hier tussen te mappen is er ook een MapStruct mapper gemaakt. De domain layer mag immers niets te weten komen over de technische implementatie.
 
-## infrastructure.adapters.outbound.persistence
-De persistence layer van de outbound adapters leveren de JPA entiteiten en de implementaties van de Ports (repositories) uit de domein laag. De repositories
-in deze laag implementeren het interface uit de domein laag en gebruiken vervolgens indien gewenst de SpringData repositories. 
-
-## infrastructure.adapters.outbound.persistence.jpa
-De JPA layer binnen persistence bevat de JPA entiteiten.
-
-## infrastructure.adapters.outbound.persistence.mapper
-De mapper layer binnen persistence bevat mapping logica van entiteiten van en naar het domein model.
-
-## infrastructure.adapters.outbound.persistence.spring
-De spring layer binnen persistence bevat de Spring Data repositories welke door de JpaOrderRepositories gebruikt kunnen
-worden.
-
-
-
+### booking.adapter.outbound.manager
+Deze package bevat twee opties om met een ander domein te praten. de _rest_ variant gaat er vanuit dat het andere domein een aparte applicatie draait, terwijl de variant in _spring_ er van uitgaat dat het andere domein in dezelfde applicatie zit. De laatste maakt gebruik van de CustomerApi interface die in customer.port.inbound staat, oftewel een inbound port is voor het customer domein.
 
 
 
