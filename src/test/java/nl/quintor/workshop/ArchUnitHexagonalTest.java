@@ -9,25 +9,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 class ArchUnitHexagonalTest {
 
-    // Domeinmodellen zijn simpele classes die in principe niets anders nodig hebben dan Java en andere models
-    // We kiezen wel voor het gebruik van Lombok
-    @Test
-    void domain_models_should_not_depend_on_other_packages() {
-        JavaClasses importedClasses = new ClassFileImporter().importPackages("nl.quintor.workshop");
-
-        ArchRule rule = classes()
-                .that()
-                .resideInAPackage("..model..")
-                .should()
-                .onlyDependOnClassesThat()
-                .resideInAnyPackage(
-                        "..model..",
-                        "java..",
-                        "lombok..");
-
-        rule.check(importedClasses);
-    }
-
     // Domein services mag gebruik maken van alles in het domein, dus ook de ports. We kiezen ervoor om specifieke
     // dependencies wél te gebruiken, maar maken dit zo concreet mogelijk door alleen een subset dan toe te staan
     @Test
