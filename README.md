@@ -58,6 +58,7 @@ D = downstream
 In scope van de workshop is een gedeeltelijke realisatie van de Customer en Booking context (waarbij booking afhankelijk is van upstream Customer).
 We pakken hierbij de "aanvraag indienen" en "klant registreren" commands.
 
+
 ## Beginstaat van het project
 
 Meegeleverd op de workshop starter branch is een Java Spring Modulith project met een geïmplementeerde `customer` module en package opzet van de `booking` module.
@@ -268,9 +269,9 @@ De inbound adapter koppelt dus de buitenwereld en de benodigde techniek daarvoor
 
 **Optioneel: wat toelichting op keuzes**  
 Je zult mogelijk nu vinden dat de `BookingApi` al een vrij duidelijk contract biedt voor clients om te gebruiken en dus direct in de controllers te gebruiken is.
-Vanuit de hexagonal architecture wil je dit ten alle tijden te voorkomen.
+Vanuit de hexagonal architecture wil je dit ten aller tijden te voorkomen.
 We willen niet dat de types van het interne domein direct in controllers worden gebruikt voor een requests en responses.
-Een belangrijke argument hiervoor is dat er altijd expliciet moet worden nagedacht wat wel en wat niet wordt exposed naar de buitenwereld.
+Een belangrijk argument hiervoor is dat er altijd expliciet moet worden nagedacht wat wel en wat niet wordt exposed naar de buitenwereld.
 Stel dat er gevoelige informatie in `Booking` klassen komt te staan, dan is het heel handig als we altijd al het werken met request/response dto's om mogelijke fouten hierbij te voorkomen.  
 Een nadeel van deze keuze is natuurlijk dat er meer code moet worden geschreven en ook dat input validatie tweemaal moet worden geïmplementeerd, zowel voor de controller dto's als de types die de `BookingApi` gebruikt.
 
