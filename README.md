@@ -644,5 +644,14 @@ public class RestCustomerManager implements CustomerManager {
 
 
 **C.** Comment in de `SpringCustomerManager` in `outbound.manager.spring` de `@Component` annotatie uit, zodat deze bean niet meer beschikbaar is en de nieuwe `RestCustomerManager` gebruikt wordt. 
-Run de tests opnieuw (verwijder eerst voor de zekerheid de `/target` directory), 5/6 van de `FunctionalIT` zouden nog steeds moeten slagen. 
-Is dat het geval, dan heb je zonder problemen een technische implementatie vervangen, terwijl er op domeinniveau er geen wijzigingen nodig waren! 
+Run de `FunctionalIT` tests opnieuw (verwijder eerst voor de zekerheid de `/target` directory), 5/6 van de `FunctionalIT` zouden nog steeds moeten slagen. 
+Is dat het geval, dan heb je zonder problemen een technische implementatie vervangen, terwijl er op domeinniveau er geen wijzigingen nodig waren! .. of toch (nog) niet? Run de `ModulithTest` nog eens en zie het resultaat: een falende test, hoe kan dit? Bij het creeëren van de adapter op het REST koppelvlak hebben we het `CustomerPostRequestDto` uit de Customer module gebruikt. Nu zou je normaal gesproken niet gauw tegenkomen dat je het dto voor communicatie over HTTP in dezelfde codebase ter beschikking hebt, maar we zien hier een voorbeeld van cross-module communicatie die zomaar niet is toegestaan. De adapter package van Customer zou eerst een named interface moeten zijn zodat `CustomerPostRequestDto` exposed mag worden aan de Booking module. Dit willen we niet, de Customer module zou namelijk zonder problemen uit het project moeten kunnen worden gehaald. Daarom gaan we het refactoren.  
+
+**D.** Maak in package `booking.adapter.outbound.rest` de **record** klasse `CustomerPostRequestDto` aan:  
+```java
+public record CustomerPostRequestDto(String name) {
+}
+```
+Verwijder nu het import statement `import nl.quintor.workshop.customer.adapter.inbound.web.CustomerPostRequestDto;` uit de `RestCustomerManager`. Dan gebruikt de klasse nu de variant die in dezelfde package staat.  
+Run `ModulithTest` opnieuw. Modules.verify slaagt weer, omdat we niet onbedoeld non-exposed types uit de Customer module gebruiken!
+
