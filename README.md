@@ -146,17 +146,12 @@ Voeg de lombok `@AllArgsConstructor` annotatie toe aan de klasse zodat we later 
 @RequiredArgsConstructor
 public class BookingService implements BookingApi {
     private final BookingRepository bookingRepository;
-    private final CustomerManager customerManager;
 
     @Override
     public Booking createBooking(NewBookingCommand command) {
 
-        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerName(),
-                command.customerPhoneNumber());
-        var customerServiceResponse = customerManager.getOrCreateCustomer(customerServiceRequest);
-
         var booking = Booking.builder()
-                .customerId(customerServiceResponse.customerId())
+                .customerId(UUID.randomUUID())
                 .toLocation(command.toLocation())
                 .fromLocation(command.fromLocation())
                 .dateTime(command.dateTime())
@@ -325,7 +320,7 @@ public class BookingSpringController {
                 createdBooking.getDateTime(),
                 createdBooking.getFromLocation(),
                 createdBooking.getToLocation(),
-                createdBooking.getNumberOfPassengers(),
+                createdBooking.getPassengerAmount(),
                 createdBooking.getStatus());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
@@ -346,15 +341,25 @@ Om alsnog de dependency injection te regelen voor `BookingApi`, configureren we 
 **D.** Voeg aan de `BookingModuleConfiguration` klasse in de `config` package de onderstaande methode toe om een bean instantie van de `BookingService` bean te maken.
 
 ```java
+@Configuration
+public class BookingModuleConfiguration {
     @Bean
     public BookingApi bookingApi(
             BookingRepository bookingRepository) {
         return new BookingService(bookingRepository);
     }
+
+    @Bean
+    public RestClient restClient() {
+        return RestClient.create();
+    }
+}
+
 ```
 
 **E.** Laten we nu kijken of het geheel van de afgelopen drie stappen werkt.
-Run de `FunctionalIT` test in de `test/java/nl/quintor/workshop` directory.
+Run de `FunctionalIT` test in de `test/java/nl/quintor/workshop` directory.   
+Via mvn: `mvn -Dtest=FunctionalIT#createNewBooking_ValidBooking_StoresBookingInDB test`.
 De `createNewBooking_ValidBooking_StoresBookingInDB` test zou nu moeten slagen indien bovenstaande stappen correct zijn uitgevoerd.
 Aan de overige testen gaan we nog werken.
 
