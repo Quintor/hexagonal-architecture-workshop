@@ -1,29 +1,37 @@
 # Hexagonal Architecture Workshop
 
-Deze repository bevat alle documentatie en code voor het kunnen geven van een workshop met als onderwerp Hexagonal
-Architecture.
+Welkom! In deze workshop gaan we aan de slag met het bouwen van een applicatie volgens de principes van hexagonal architecture, ook wel bekend als ports and adapters architecture. We gaan zien hoe deze architectuurstijl kan worden toegepast
+in een monolithische applicatie die bestaat uit meerdere domeinen van een kleine taxibedrijf casus.
 
-- [Onboarding](docs/assignment-diagrammen/onboarding.md)
-- [Architectuur](docs/hexagonal.md)
+## Programma
+
+15:45-16:00: introductiepresentatie tot hexagonal architectuur door een layered architecture voorbeeld stap voor stap om te zetten naar hexagonal  
+16:00-16:50: uitvoeren opdrachten ter uitwerking van de casus  
+16:50-17:00: overview gerealiseerde applicatie
 
 ## Leerdoelen
 
-1. Hoe kan je op een onderhoudbare manier een grote applicatie neerzetten?
-2. Het explicieter toepassen van bekende concepten door te communiceren in termen van patterns (DI, IoC, etc.)
+1. Hoe kan je op een onderhoudbare manier een grote monolithische applicatie neerzetten aan de hand van de hexagonal stijl?
+2. Hoe kunnen technische implementaties worden verwisseld zonder dat dit impact heeft op de domeinspecifieke functionaliteiten?
+3. Hoe valideren we de architectuurregels van een hexagonal architectuur met ArchUnit?
+4. Hoe kunnen we aan de hand van Spring Modulith meerdere bounded contexts (domeinen) met goed gedefinieerde afhankelijkheden in een monolithische applicatie bouwen?
 
 # Onboarding
 
 **Vereiste software:**
 
 - JDK 17
-- Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)
+- Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)  
+  Binnen deze workshop wordt er gewerkt met een set aan dependencies welke al zijn meegegeven in de pom.xml van het project.
 
-**Download de code van:** TODO: main of specifieke branch?  
-**Opschonen van gecompileerde bestanden:** `mvn clean`  
-**Runnen van alle tests:** `mvn verify`
+**Startpunt:** clone de `starter` branch van de repository en open deze in je IDE.
 
-Gebruik je de automatische run configuratie van een IDE en loop je tegen problemen aan?  
-Gooi dan altijd eerst de /target directory weg en probeer het opnieuw om zeker te weten dat er geen oude gecompileerde bestanden in de weg zitten.
+**Belangrijke commands**:
+We gaan aan de hand van tests in `test.java.nl.quintor.workshop` de functionaliteit van de applicatie doorlopend valideren, dus het is belangrijk dat je weet hoe je deze kan runnen:  
+Optie 1: gebruik je automatisch geconfigureerde IDE om de test directory of individuele tests (wanneer aangegeven) te runnen. Verwijder voor de zekerheid altijd eerst de `/target/` directory  
+Optie 2: gebruik het maven command `mvn clean verify` om alle tests te runnen. Wil je een specifieke test runnen, gebruik dan `mvn -Dtest=TestClassName#testMethodName test`
+
+**Opschonen van gecompileerde bestanden:** `mvn clean` (of verwijder `/target`)
 
 # De opdracht
 
@@ -58,7 +66,8 @@ In de `customer` module zijn er een tweetal REST endpoints beschikbaar en een Mo
 ![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.png)
 
 Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl. De packagestructuur ziet er als volgt uit:  
-![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.png)
+![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.png)  
+Meer vooraf eerst lezen over deze opzet, zie [Hexagonal.md](docs/hexagonal.md).
 
 ## Stap 1: Implementeren van het Booking domein
 
@@ -358,7 +367,7 @@ public class BookingModuleConfiguration {
 ```
 
 **E.** Laten we nu kijken of het geheel van de afgelopen drie stappen werkt.
-Run de `FunctionalIT` test in de `test/java/nl/quintor/workshop` directory (verwijder eerst voor de zekerheid de `/target` directory).   
+Run de `FunctionalIT` test in de `test/java/nl/quintor/workshop` directory (verwijder eerst voor de zekerheid de `/target` directory).  
 Via mvn: `mvn -Dtest=FunctionalIT#createNewBooking_ValidBooking_StoresBookingInDB test`.
 De `createNewBooking_ValidBooking_StoresBookingInDB` test zou nu moeten slagen indien bovenstaande stappen correct zijn uitgevoerd.
 Aan de overige testen gaan we nog werken.
@@ -388,7 +397,7 @@ Draai de aanpassingen aan de implementatie terug zodat de tests weer slagen.
 
 **C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`).
 De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter
-inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken. Zie de eindstaat branch ter controle van jouw 
+inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken. Zie de eindstaat branch ter controle van jouw
 implementatie.
 
 Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test
@@ -447,15 +456,17 @@ public record GetOrCreateCustomerResponse(UUID customerId) {
 }
 ```
 
-**D.** Maak een **interface** klasse `CustomerManager` aan in de `booking.domain.port.outbound` package die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`. 
-Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.  
+**D.** Maak een **interface** klasse `CustomerManager` aan in de `booking.domain.port.outbound` package die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`.
+Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.
+
 ```java
 public interface CustomerManager {
     GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest);
 }
-```  
+```
 
-**E.** Breid dan ook nu met de tools van stappen C en D de `BookingService` in de `service` package uit ter realisatie van de volgende flow:  
+**E.** Breid dan ook nu met de tools van stappen C en D de `BookingService` in de `service` package uit ter realisatie van de volgende flow:
+
 1. Het customer telefoonnummer en de naam worden gehaald uit het binnengekomen `NewBookingCommand` argument.
 2. De `CustomerManager` wordt gebruikt om een `GetOrCreateCustomerRequest` te maken en te versturen.
 3. Uit het response van de manager, pak je het customerId en maak je een `Booking` aan zoals eerder, maar dan met het verkregen customerId in plaats van een random UUID.
@@ -484,15 +495,13 @@ public class BookingService implements BookingApi {
         return bookingRepository.save(booking);
     }
 }
-```  
+```
 
 **Het booking domein is nu gereed en ongeacht hoe de customer domein koppeling zal zijn (e.g. in de monoliet zelf, of een externe microservice), de business logica hoeft niet te worden aangepast!**
 
-
 **F.** We gaan nu een technische implementatie leveren in de vorm van een adapter die binnen het Spring process de methode calls gaat doen naar wat in runtime daadwerkelijk de `CustomerService` is, welke een implementatie is van de `CustomerApi` interface.  
-Net zoals bij de booking repository, realiseren we dit in de `booking.adapter.outbound` package. 
-Maak in de child package `manager.spring` de `SpringCustomerMapper` klasse:   
-
+Net zoals bij de booking repository, realiseren we dit in de `booking.adapter.outbound` package.
+Maak in de child package `manager.spring` de `SpringCustomerMapper` klasse:
 
 ```java
 @Mapper(componentModel = "spring")
@@ -504,8 +513,8 @@ public interface SpringCustomerMapper {
 }
 ```
 
-Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen. 
-Maak vervolgens de adapter klasse `SpringCustomerManager` in dezelfde package aan die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk). 
+Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen.
+Maak vervolgens de adapter klasse `SpringCustomerManager` in dezelfde package aan die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk).
 
 ```java
 @Component
@@ -522,9 +531,10 @@ public class SpringCustomerManager implements CustomerManager {
         return springCustomerMapper.fromReply(reply);
     }
 }
-```  
+```
 
-We moeten ook nog `BookingModuleConfiguration` in de `booking.config` package bijwerken in verband met de toegevoegde dependency aan `BookingService`:  
+We moeten ook nog `BookingModuleConfiguration` in de `booking.config` package bijwerken in verband met de toegevoegde dependency aan `BookingService`:
+
 ```java
 // Bestaande code hier
 
@@ -535,35 +545,30 @@ We moeten ook nog `BookingModuleConfiguration` in de `booking.config` package bi
     }
 
 // Bestaande code hier
-```   
-
-
-
+```
 
 **G.** Als het goed is ziet het project er nu als volgt uit (let op: vereenvoudigd tot hoofdzakelijk de nieuwe klasses uit stap 5):  
 ![Beginstaat icm booking](docs/assignment-diagrammen/beginstaat-plus-booking.drawio.png)
 
-**H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory (verwijder eerst voor de zekerheid de `/target` directory). 
-De drie tests die beginnen met `getAllCustomers_` zouden moeten slagen. 
+**H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory (verwijder eerst voor de zekerheid de `/target` directory).
+De drie tests die beginnen met `getAllCustomers_` zouden moeten slagen.
 De overige tests kun je voor nu nog negeren.
 
-
 **Spring Modulith**  
-In de pom van het project is al een dependency toegevoegd voor Spring Modulith. 
-Deze tool helpt bij het structureren van een monolitische applicatie in modules en het afdwingen van de regels die daarbij horen. 
-Het zorgt ervoor dat de modules losgekoppeld blijven en dat de afhankelijkheden tussen modules duidelijk zijn. 
-Of dit correct is gedaan zijn er [default rules](<https://docs.spring.io/spring-modulith/reference/verification.html>) die met een verify API kunnen worden gecheckt.  
-Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `booking` root packages worden als modules gezien door Spring Modulith), willen we modulith gebruiken om ons te helpen bij het in de gaten houden dat we niet onbedoeld klassen van de ene module in de andere gebruiken. 
+In de pom van het project is al een dependency toegevoegd voor Spring Modulith.
+Deze tool helpt bij het structureren van een monolitische applicatie in modules en het afdwingen van de regels die daarbij horen.
+Het zorgt ervoor dat de modules losgekoppeld blijven en dat de afhankelijkheden tussen modules duidelijk zijn.
+Of dit correct is gedaan zijn er [default rules](https://docs.spring.io/spring-modulith/reference/verification.html) die met een verify API kunnen worden gecheckt.  
+Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `booking` root packages worden als modules gezien door Spring Modulith), willen we modulith gebruiken om ons te helpen bij het in de gaten houden dat we niet onbedoeld klassen van de ene module in de andere gebruiken.
 
-**I.** Run de `ModulithTest` in de `test` directory, `verifyModules` faalt als het goed is. 
+**I.** Run de `ModulithTest` in de `test` directory, `verifyModules` faalt als het goed is.
 Lees de foutmelding die hierbij wordt gegeven.  
-We hebben in de adapter laag van Booking een koppeling gelegd met de inbound port klassen uit Customer. 
-Dat mag niet zomaar van Modulith, de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](<https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces>).  
-`CustomerApi` en de command en reply klassen in de `port.inbound` package zullen moeten worden exposed. 
-Daarvoor is het nodig dat de package of iedere klasse als `@NamedInterface` geannoteerd wordt. 
+We hebben in de adapter laag van Booking een koppeling gelegd met de inbound port klassen uit Customer.
+Dat mag niet zomaar van Modulith, de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces).  
+`CustomerApi` en de command en reply klassen in de `port.inbound` package zullen moeten worden exposed.
+Daarvoor is het nodig dat de package of iedere klasse als `@NamedInterface` geannoteerd wordt.
 We kiezen voor het gemak om de gehele package een named interface te maken.
-Maak bestand `package-info.java` in de `customer.domain.port.inbound` package met definitie:  
-
+Maak bestand `package-info.java` in de `customer.domain.port.inbound` package met definitie:
 
 ```java
 @NamedInterface
@@ -573,23 +578,21 @@ import org.springframework.modulith.NamedInterface;
 ```
 
 Run nu nogmaals de `ModulithTest`(verwijder eerst voor de zekerheid de `/target` directory), `verifyModules` zou nu moeten slagen.
-Een leuke feature van Spring Modulith is dat er in de `target` directory een plantuml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt? 
-Het komt precies overeen met de eerdere context map!  
-
+Een leuke feature van Spring Modulith is dat er in de `target` directory een plantuml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt?
+Het komt precies overeen met de eerdere context map!
 
 ## Stap 6: CustomerManager Spring adapter vervangen door REST adapter
 
 Als het customer domein op een gegeven moment geen onderdeel meer is van de Rebü applicatie, maar een los systeem of service, dan zal deze via een andere API gekoppeld moeten worden.
-In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen, maar gaan we indirect de `CustomerController` gebruiken via REST. 
+In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen, maar gaan we indirect de `CustomerController` gebruiken via REST.
 
 We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `RestCustomerManager`.
 Merk zo op dat je bij deze refactoring geen logica en klassen onder de `booking.domain` package hoeft aan te passen.
 Dit is typisch wat we willen met een hexagonal architecture.
 
-**A.** Het REST API contract is als volgt: PUT op `/customers/phoneNumber` met een request dto voor de naam, welke een dto terugstuurt met o.a. `id` als property. 
-Deze gaan we nodig hebben als `customerId` property in de `GetOrCreateCustomerResponse` response. 
-Maak een `RestCustomerResponseDto` record klasse aan in de `booking.adapter.outbound.manager.rest`:  
-
+**A.** Het REST API contract is als volgt: PUT op `/customers/phoneNumber` met een request dto voor de naam, welke een dto terugstuurt met o.a. `id` als property.
+Deze gaan we nodig hebben als `customerId` property in de `GetOrCreateCustomerResponse` response.
+Maak een `RestCustomerResponseDto` record klasse aan in de `booking.adapter.outbound.manager.rest`:
 
 ```java
 public record RestCustomerResponseDto(UUID id,
@@ -599,8 +602,7 @@ public record RestCustomerResponseDto(UUID id,
 ```
 
 Ook in deze adapter zullen we de outbound port klassen moeten mappen naar de REST client dto's.
-Maak daarom ook in dezelfde package een mapper aan genaamd `RestCustomerDtoMapper` en zie dat `customerId` expliciet gemapt moet worden naar `id`: 
-
+Maak daarom ook in dezelfde package een mapper aan genaamd `RestCustomerDtoMapper` en zie dat `customerId` expliciet gemapt moet worden naar `id`:
 
 ```java
 @Mapper(componentModel = "spring")
@@ -610,10 +612,10 @@ public interface RestCustomerDtoMapper {
 }
 ```
 
-Zoals je ziet lost de `@Mapping` de property naamgeving mismatch op.  
+Zoals je ziet lost de `@Mapping` de property naamgeving mismatch op.
 
-**B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren. 
-Maak in dezelfde package een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen.  
+**B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren.
+Maak in dezelfde package een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen.
 
 ```java
 @Component
@@ -641,17 +643,16 @@ public class RestCustomerManager implements CustomerManager {
 }
 ```
 
+**C.** Comment in de `SpringCustomerManager` in `outbound.manager.spring` de `@Component` annotatie uit, zodat deze bean niet meer beschikbaar is en de nieuwe `RestCustomerManager` gebruikt wordt.
+Run de `FunctionalIT` tests opnieuw (verwijder eerst voor de zekerheid de `/target` directory), 5/6 van de `FunctionalIT` zouden nog steeds moeten slagen.
+Is dat het geval, dan heb je zonder problemen een technische implementatie vervangen, terwijl er op domeinniveau er geen wijzigingen nodig waren! .. of toch (nog) niet? Run de `ModulithTest` nog eens en zie het resultaat: een falende test, hoe kan dit? Bij het creeëren van de adapter op het REST koppelvlak hebben we het `CustomerPostRequestDto` uit de Customer module gebruikt. Nu zou je normaal gesproken niet gauw tegenkomen dat je het dto voor communicatie over HTTP in dezelfde codebase ter beschikking hebt, maar we zien hier een voorbeeld van cross-module communicatie die zomaar niet is toegestaan. De adapter package van Customer zou eerst een named interface moeten zijn zodat `CustomerPostRequestDto` exposed mag worden aan de Booking module. Dit willen we niet, de Customer module zou namelijk zonder problemen uit het project moeten kunnen worden gehaald. Daarom gaan we het refactoren.
 
+**D.** Maak in package `booking.adapter.outbound.rest` de **record** klasse `CustomerPostRequestDto` aan:
 
-**C.** Comment in de `SpringCustomerManager` in `outbound.manager.spring` de `@Component` annotatie uit, zodat deze bean niet meer beschikbaar is en de nieuwe `RestCustomerManager` gebruikt wordt. 
-Run de `FunctionalIT` tests opnieuw (verwijder eerst voor de zekerheid de `/target` directory), 5/6 van de `FunctionalIT` zouden nog steeds moeten slagen. 
-Is dat het geval, dan heb je zonder problemen een technische implementatie vervangen, terwijl er op domeinniveau er geen wijzigingen nodig waren! .. of toch (nog) niet? Run de `ModulithTest` nog eens en zie het resultaat: een falende test, hoe kan dit? Bij het creeëren van de adapter op het REST koppelvlak hebben we het `CustomerPostRequestDto` uit de Customer module gebruikt. Nu zou je normaal gesproken niet gauw tegenkomen dat je het dto voor communicatie over HTTP in dezelfde codebase ter beschikking hebt, maar we zien hier een voorbeeld van cross-module communicatie die zomaar niet is toegestaan. De adapter package van Customer zou eerst een named interface moeten zijn zodat `CustomerPostRequestDto` exposed mag worden aan de Booking module. Dit willen we niet, de Customer module zou namelijk zonder problemen uit het project moeten kunnen worden gehaald. Daarom gaan we het refactoren.  
-
-**D.** Maak in package `booking.adapter.outbound.rest` de **record** klasse `CustomerPostRequestDto` aan:  
 ```java
 public record CustomerPostRequestDto(String name) {
 }
 ```
+
 Verwijder nu het import statement `import nl.quintor.workshop.customer.adapter.inbound.web.CustomerPostRequestDto;` uit de `RestCustomerManager`. Dan gebruikt de klasse nu de variant die in dezelfde package staat.  
 Run `ModulithTest` opnieuw. Modules.verify slaagt weer, omdat we niet onbedoeld non-exposed types uit de Customer module gebruiken!
-
