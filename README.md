@@ -26,6 +26,8 @@ in een monolithische applicatie die bestaat uit meerdere domeinen van een kleine
 
 **Startpunt:** clone de `starter-new` branch van de repository en open deze in je IDE.
 
+**Uitwerking:** mocht je aan het einde van de workshop het resultaat willen zien, kijk dan in de main branch
+
 **Belangrijke commands**:
 We gaan aan de hand van tests in `test.java.nl.quintor.workshop` de functionaliteit van de applicatie doorlopend valideren, dus het is belangrijk dat je weet hoe je deze kan runnen:  
 Optie 1: gebruik je automatisch geconfigureerde IDE om de test directory of individuele tests (wanneer aangegeven) te runnen. Verwijder voor de zekerheid altijd eerst de `/target/` directory  
