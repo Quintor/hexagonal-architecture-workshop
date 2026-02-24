@@ -1,29 +1,37 @@
 # Hexagonal Architecture Workshop
 
-Deze repository bevat alle documentatie en code voor het kunnen geven van een workshop met als onderwerp Hexagonal
-Architecture.
+Welkom! In deze workshop gaan we aan de slag met het bouwen van een applicatie volgens de principes van hexagonal architecture, ook wel bekend als ports and adapters architecture. We gaan zien hoe deze architectuurstijl kan worden toegepast
+in een monolithische applicatie die bestaat uit meerdere domeinen van een kleine taxibedrijf casus.
 
-- [Onboarding](docs/assignment-diagrammen/onboarding.md)
-- [Architectuur](docs/assignment-diagrammen/architectuur.md)
+## Programma
+
+15:45-16:00: introductiepresentatie tot hexagonal architectuur door een layered architecture voorbeeld stap voor stap om te zetten naar hexagonal  
+16:00-16:50: uitvoeren opdrachten ter uitwerking van de casus  
+16:50-17:00: overview gerealiseerde applicatie
 
 ## Leerdoelen
 
-1. Hoe kan je op een onderhoudbare manier een grote applicatie neerzetten?
-2. Het explicieter toepassen van bekende concepten door te communiceren in termen van patterns (DI, IoC, etc.)
+1. Hoe kan je op een onderhoudbare manier een grote monolithische applicatie neerzetten aan de hand van de hexagonal stijl?
+2. Hoe kunnen technische implementaties worden verwisseld zonder dat dit impact heeft op de domeinspecifieke functionaliteiten?
+3. Hoe valideren we de architectuurregels van een hexagonal architectuur met ArchUnit?
+4. Hoe kunnen we aan de hand van Spring Modulith meerdere bounded contexts (domeinen) met goed gedefinieerde afhankelijkheden in een monolithische applicatie bouwen?
 
 # Onboarding
 
 **Vereiste software:**
 
 - JDK 17
-- Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)
+- Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)  
+  Binnen deze workshop wordt er gewerkt met een set aan dependencies welke al zijn meegegeven in de pom.xml van het project.
 
-**Download de code van:** TODO: main of specifieke branch?  
-**Opschonen van gecompileerde bestanden:** `mvn clean`  
-**Runnen van alle tests:** `mvn verify`
+**Startpunt:** clone de `starter` branch van de repository en open deze in je IDE.
 
-Gebruik je de automatische run configuratie van een IDE en loop je tegen problemen aan?  
-Gooi dan altijd eerst de /target directory weg en probeer het opnieuw om zeker te weten dat er geen oude gecompileerde bestanden in de weg zitten.
+**Belangrijke commands**:
+We gaan aan de hand van tests in `test.java.nl.quintor.workshop` de functionaliteit van de applicatie doorlopend valideren, dus het is belangrijk dat je weet hoe je deze kan runnen:  
+Optie 1: gebruik je automatisch geconfigureerde IDE om de test directory of individuele tests (wanneer aangegeven) te runnen. Verwijder voor de zekerheid altijd eerst de `/target/` directory  
+Optie 2: gebruik het maven command `mvn clean verify` om alle tests te runnen. Wil je een specifieke test runnen, gebruik dan `mvn -Dtest=TestClassName#testMethodName test`
+
+**Opschonen van gecompileerde bestanden:** `mvn clean` (of verwijder `/target`)
 
 # De opdracht
 
@@ -58,7 +66,8 @@ In de `customer` module zijn er een tweetal REST endpoints beschikbaar en een Mo
 ![Beginstaat Customer diagram](docs/assignment-diagrammen/beginstaat-customer.drawio.png)
 
 Deze `booking` module zullen we stapsgewijs implementeren volgens de hexagonal architecture stijl. De packagestructuur ziet er als volgt uit:  
-![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.png)
+![Beginstaat Booking diagram](docs/assignment-diagrammen/beginstaat-booking.drawio.png)  
+Meer vooraf eerst lezen over deze opzet?, zie [Hexagonal.md](docs/hexagonal.md).
 
 ## Stap 1: Implementeren van het Booking domein
 
