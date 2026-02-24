@@ -4,7 +4,7 @@ Deze repository bevat alle documentatie en code voor het kunnen geven van een wo
 Architecture.
 
 - [Onboarding](docs/assignment-diagrammen/onboarding.md)
-- [Architectuur](docs/assignment-diagrammen/architectuur.md)
+- [Architectuur](docs/hexagonal.md)
 
 ## Leerdoelen
 
