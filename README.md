@@ -358,7 +358,7 @@ public class BookingModuleConfiguration {
 ```
 
 **E.** Laten we nu kijken of het geheel van de afgelopen drie stappen werkt.
-Run de `FunctionalIT` test in de `test/java/nl/quintor/workshop` directory.   
+Run de `FunctionalIT` test in de `test/java/nl/quintor/workshop` directory (verwijder eerst voor de zekerheid de `/target` directory).   
 Via mvn: `mvn -Dtest=FunctionalIT#createNewBooking_ValidBooking_StoresBookingInDB test`.
 De `createNewBooking_ValidBooking_StoresBookingInDB` test zou nu moeten slagen indien bovenstaande stappen correct zijn uitgevoerd.
 Aan de overige testen gaan we nog werken.
@@ -414,7 +414,7 @@ Daarnaast ondersteunt het het bouwen van goed gestructureerde, domain-oriented S
 
 De combinatie van een domain-oriented software architectuur en een modulaire monoliet architectuur wordt ook wel een [sliced onion architectuur](https://odrotbohm.de/2023/07/sliced-onion-architecture/) genoemd.
 
-**A.** Analyseer `domain.inbound.port` in de `Customer` module.
+**A.** Analyseer `domain.port.inbound` in de `Customer` module.
 Je ziet hier een `Command` en `Reply` die is gemaakt voor de 'klant registreren' command uit het eerdere event storming diagram.
 We willen dat bij het aanmaken van een booking de klant geregistreerd wordt als die nog niet bekend is, als onderdeel van de rit aanvraag registratie flow.
 Dit houdt in dat het telefoonnummer van de klant in het `NewBookingCommand` als payload wordt gebruikt om de customer id te verkrijgen vanuit de customer module, waarbij de customer aangemaakt wordt als die nog niet bestaat.
@@ -431,7 +431,7 @@ Dit betekent wederom extra code, maar we krijgen er aanpasbaarheid, onderhoudbaa
 
 **Als antwoord op bovenstaande vraag, moeten we rekening houden met:**
 
-- De `Command` en `Reply` klasses in de `inbound.port` package van de customer module mogen niet in de domeinlaag van de booking module worden gebruikt, want dan kan de customer module niet worden verwijderd zonder refactor in de andere module.
+- De `Command` en `Reply` klasses in de `port.inbound` package van de customer module mogen niet in de domeinlaag van de booking module worden gebruikt, want dan kan de customer module niet worden verwijderd zonder refactor in de andere module.
 - Vergelijkbaar met wat we met de repositories hebben gedaan, mag de `BookingService` niet direct praten met een klasse die de calls naar de `CustomerApi` verzorgen, er is dus weer een outbound port nodig.
 - Om het punt hierboven voor elkaar te krijgen is er wederom weer een technische outbound adapter nodig.
 
@@ -448,21 +448,50 @@ public record GetOrCreateCustomerResponse(UUID customerId) {
 ```
 
 **D.** Maak een **interface** klasse `CustomerManager` aan in de `booking.domain.outbound.port` package die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`. 
-Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.
+Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.  
+```java
+public interface CustomerManager {
+    GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest);
+}
+```  
 
 **E.** Breid dan ook nu met de tools van stappen C en D de `BookingService` in de `service` package uit ter realisatie van de volgende flow:  
-1. Het customer telefoonnummer wordt gehaald uit het binnengekomen `NewBookingCommand` argument.
+1. Het customer telefoonnummer en de naam worden gehaald uit het binnengekomen `NewBookingCommand` argument.
 2. De `CustomerManager` wordt gebruikt om een `GetOrCreateCustomerRequest` te maken en te versturen.
 3. Uit het response van de manager, pak je het customerId en maak je een `Booking` aan zoals eerder, maar dan met het verkregen customerId in plaats van een random UUID.
 4. De booking wordt opgeslagen zoals eerder via de `BookingRepository`
 
+```java
+@RequiredArgsConstructor
+public class BookingService implements BookingApi {
+    private final BookingRepository bookingRepository;
+    private final CustomerManager customerManager;
+
+    @Override
+    public Booking createBooking(NewBookingCommand command) {
+        var customerServiceRequest = new GetOrCreateCustomerRequest(command.customerName(),
+                command.customerPhoneNumber());
+        var customerServiceResponse = customerManager.getOrCreateCustomer(customerServiceRequest);
+
+        var booking = Booking.builder()
+                .customerId(customerServiceResponse.customerId())
+                .toLocation(command.toLocation())
+                .fromLocation(command.fromLocation())
+                .dateTime(command.dateTime())
+                .passengerAmount(command.passengerAmount())
+                .build();
+
+        return bookingRepository.save(booking);
+    }
+}
+```  
 
 **Het booking domein is nu gereed en ongeacht hoe de customer domein koppeling zal zijn (e.g. in de monoliet zelf, of een externe microservice), de business logica hoeft niet te worden aangepast!**
 
 
 **F.** We gaan nu een technische implementatie leveren in de vorm van een adapter die binnen het Spring process de methode calls gaat doen naar wat in runtime daadwerkelijk de `CustomerService` is, welke een implementatie is van de `CustomerApi` interface.  
 Net zoals bij de booking repository, realiseren we dit in de `booking.adapter.outbound` package. 
-Maak in de child package `manager` de `SpringCustomerMapper` klasse:   
+Maak in de child package `manager.spring` de `SpringCustomerMapper` klasse:   
 
 
 ```java
@@ -476,13 +505,49 @@ public interface SpringCustomerMapper {
 ```
 
 Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen. 
-Maak vervolgens de adapter klasse `SpringCustomerManager` die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk). 
+Maak vervolgens de adapter klasse `SpringCustomerManager` in dezelfde package aan die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk). 
+
+```java
+@Component
+@RequiredArgsConstructor
+public class SpringCustomerManager implements CustomerManager {
+    private final CustomerApi customerApi;
+    private final SpringCustomerMapper springCustomerMapper;
+
+    @Override
+    public GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest getOrCreateCustomerRequest) {
+        var command = springCustomerMapper.toCommand(getOrCreateCustomerRequest);
+        var reply = customerApi.getOrCreateCustomer(command);
+
+        return springCustomerMapper.fromReply(reply);
+    }
+}
+```  
+
+We moeten ook nog `BookingModuleConfiguration` in de `config` package van Booking bijwerken in verband met de toegevoegde dependency aan `BookingService`:  
+```java
+@Configuration
+public class BookingModuleConfiguration {
+    @Bean
+    public BookingApi bookingApi(
+            BookingRepository bookingRepository, CustomerManager customerManager) {
+        return new BookingService(bookingRepository, customerManager);
+    }
+
+    @Bean
+    public RestClient restClient() {
+        return RestClient.create();
+    }
+}
+```   
+
+
 
 
 **G.** Als het goed is ziet het project er nu als volgt uit (let op: vereenvoudigd tot hoofdzakelijk de nieuwe klasses uit stap 5):  
 ![Beginstaat icm booking](docs/assignment-diagrammen/beginstaat-plus-booking.drawio.svg)
 
-**H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory. 
+**H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory (verwijder eerst voor de zekerheid de `/target` directory). 
 De drie tests die beginnen met `getAllCustomers_` zouden moeten slagen. 
 De overige tests kun je voor nu nog negeren.
 
@@ -498,10 +563,10 @@ Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `bo
 Lees de foutmelding die hierbij wordt gegeven.  
 We hebben in de adapter laag van Booking een koppeling gelegd met de inbound port klassen uit Customer. 
 Dat mag niet zomaar van Modulith, de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](<https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces>).  
-`CustomerApi` en de command en reply klassen in de `inbound.port` package zullen moeten worden exposed. 
+`CustomerApi` en de command en reply klassen in de `port.inbound` package zullen moeten worden exposed. 
 Daarvoor is het nodig dat de package of iedere klasse als `@NamedInterface` geannoteerd wordt. 
 We kiezen voor het gemak om de gehele package een named interface te maken.
-Maak bestand `package-info.java` in de `customer.inbound.port` package met definitie:  
+Maak bestand `package-info.java` in de `customer.domain.port.inbound` package met definitie:  
 
 
 ```java
