@@ -20,7 +20,7 @@ in een monolithische applicatie die bestaat uit meerdere domeinen van een kleine
 
 **Vereiste software:**
 
-- JDK 17
+- JDK 17 of hoger
 - Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)  
   Binnen deze workshop wordt er gewerkt met een set aan dependencies welke al zijn meegegeven in de pom.xml van het project.
 
