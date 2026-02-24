@@ -24,7 +24,7 @@ in een monolithische applicatie die bestaat uit meerdere domeinen van een kleine
 - Maven 3.6+ (of gebruik `mvn` wrapper scripts: `./mvnw` op Linux/Mac of `mvnw.cmd` op Windows)  
   Binnen deze workshop wordt er gewerkt met een set aan dependencies welke al zijn meegegeven in de pom.xml van het project.
 
-**Startpunt:** clone de `starter` branch van de repository en open deze in je IDE.
+**Startpunt:** clone de `starter-new` branch van de repository en open deze in je IDE.
 
 **Belangrijke commands**:
 We gaan aan de hand van tests in `test.java.nl.quintor.workshop` de functionaliteit van de applicatie doorlopend valideren, dus het is belangrijk dat je weet hoe je deze kan runnen:  
