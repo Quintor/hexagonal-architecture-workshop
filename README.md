@@ -541,7 +541,7 @@ We moeten ook nog `BookingModuleConfiguration` in de `booking.config` package bi
 
 
 **G.** Als het goed is ziet het project er nu als volgt uit (let op: vereenvoudigd tot hoofdzakelijk de nieuwe klasses uit stap 5):  
-![Beginstaat icm booking](docs/assignment-diagrammen/beginstaat-plus-booking.drawio.svg)
+![Beginstaat icm booking](docs/assignment-diagrammen/beginstaat-plus-booking.drawio.png)
 
 **H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory (verwijder eerst voor de zekerheid de `/target` directory). 
 De drie tests die beginnen met `getAllCustomers_` zouden moeten slagen. 
