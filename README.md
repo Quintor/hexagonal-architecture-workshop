@@ -203,7 +203,7 @@ public class BookingEntity {
 ```
 
 **B.** Zoals je wellicht weet van Spring Data JPA-repositories, moet er een interface worden aangemaakt die overerft van `JpaRepository`.
-Maak daarom de onderstaande `SpringDataBookingRepository` interface aan voor het opslaan van de `BookingEntity`.
+Maak daarom de onderstaande `SpringDataBookingRepository` interface in dezelfde package aan voor het opslaan van de `BookingEntity`.
 
 ```java
   @Repository
@@ -215,7 +215,7 @@ Maak daarom de onderstaande `SpringDataBookingRepository` interface aan voor het
 Met een adapter klasse in de outbound adapter laag van de hexagonal architecture zullen we deze twee aan elkaar moeten koppelen.
 We moeten dus een adapter klasse maken die de `BookingRepository` interface implementeert en intern gebruik maakt van de `SpringDataBookingRepository` interface en ook de mapping verzorgt tussen de JPA entity `BookingEntity` en de domein klasse `Booking`.
 
-Maak de onderstaande `BookingEntityMapper` klasse aan die mapstruct gebruikt voor het mappen tussen `Booking` en `BookingEntity` objecten.
+Maak in dezelfde package de onderstaande `BookingEntityMapper` klasse aan die mapstruct gebruikt voor het mappen tussen `Booking` en `BookingEntity` objecten.
 
 ```java
 @Mapper(componentModel = "spring")
@@ -227,7 +227,7 @@ public interface BookingEntityMapper {
 }
 ```
 
-Maak de `H2BookingRepository` klasse aan die de `SpringDataBookingRepository` en `BookingEntityMapper` klassen gebruikt om de interface `BookingRepository` van de domein laag te implementeren.
+Maak in dezelfde package de `H2BookingRepository` klasse aan die de `SpringDataBookingRepository` en `BookingEntityMapper` klassen gebruikt om de interface `BookingRepository` van de domein laag te implementeren.
 De klasse is geannoteerd met `@Repository` zodat deze adapter klasse als spring bean beschikbaar komt.
 
 ```java
@@ -338,7 +338,7 @@ Omdat de verantwoordelijkheid in de adapter laag ligt bij het implementeren van 
 Het domein houden we echter zoveel mogelijk onafhankelijk van techniek en het Spring framework.
 Om alsnog de dependency injection te regelen voor `BookingApi`, configureren we dit in een aparte spring configuration klasse.
 
-**D.** Voeg aan de `BookingModuleConfiguration` klasse in de `config` package de onderstaande methode toe om een bean instantie van de `BookingService` bean te maken.
+**D.** Voeg aan de `BookingModuleConfiguration` klasse in de `booking.config` package de onderstaande methode toe om een bean instantie van de `BookingService` bean te maken. Je krijgt alvast een RestClient mee voor een latere stap in de workshop.
 
 ```java
 @Configuration
@@ -435,7 +435,7 @@ Dit betekent wederom extra code, maar we krijgen er aanpasbaarheid, onderhoudbaa
 - Vergelijkbaar met wat we met de repositories hebben gedaan, mag de `BookingService` niet direct praten met een klasse die de calls naar de `CustomerApi` verzorgen, er is dus weer een outbound port nodig.
 - Om het punt hierboven voor elkaar te krijgen is er wederom weer een technische outbound adapter nodig.
 
-**C.** De customer port van het booking domein moeten los blijven staan van de customer module, maak daarom een eigen versie van de command en reply aan in de `booking.domain.outbound.port` package met record klasses `GetOrCreateCustomerRequest` en `GetOrCreateCustomerResponse`:
+**C.** De customer port van het booking domein moeten los blijven staan van de customer module, maak daarom een eigen versie van de command en reply aan in de `booking.domain.port.outbound` package met record klasses `GetOrCreateCustomerRequest` en `GetOrCreateCustomerResponse`:
 
 ```java
 public record GetOrCreateCustomerRequest(String name, String phoneNumber) {
@@ -447,7 +447,7 @@ public record GetOrCreateCustomerResponse(UUID customerId) {
 }
 ```
 
-**D.** Maak een **interface** klasse `CustomerManager` aan in de `booking.domain.outbound.port` package die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`. 
+**D.** Maak een **interface** klasse `CustomerManager` aan in de `booking.domain.port.outbound` package die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`. 
 Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.  
 ```java
 public interface CustomerManager {
@@ -524,21 +524,17 @@ public class SpringCustomerManager implements CustomerManager {
 }
 ```  
 
-We moeten ook nog `BookingModuleConfiguration` in de `config` package van Booking bijwerken in verband met de toegevoegde dependency aan `BookingService`:  
+We moeten ook nog `BookingModuleConfiguration` in de `booking.config` package bijwerken in verband met de toegevoegde dependency aan `BookingService`:  
 ```java
-@Configuration
-public class BookingModuleConfiguration {
+// Bestaande code hier
+
     @Bean
     public BookingApi bookingApi(
             BookingRepository bookingRepository, CustomerManager customerManager) {
         return new BookingService(bookingRepository, customerManager);
     }
 
-    @Bean
-    public RestClient restClient() {
-        return RestClient.create();
-    }
-}
+// Bestaande code hier
 ```   
 
 
@@ -559,7 +555,7 @@ Het zorgt ervoor dat de modules losgekoppeld blijven en dat de afhankelijkheden 
 Of dit correct is gedaan zijn er [default rules](<https://docs.spring.io/spring-modulith/reference/verification.html>) die met een verify API kunnen worden gecheckt.  
 Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `booking` root packages worden als modules gezien door Spring Modulith), willen we modulith gebruiken om ons te helpen bij het in de gaten houden dat we niet onbedoeld klassen van de ene module in de andere gebruiken. 
 
-**I.** Run de test `ModulithTest` in de `test` directory, deze faalt als het goed is. 
+**I.** Run de `ModulithTest` in de `test` directory, `verifyModules` faalt als het goed is. 
 Lees de foutmelding die hierbij wordt gegeven.  
 We hebben in de adapter laag van Booking een koppeling gelegd met de inbound port klassen uit Customer. 
 Dat mag niet zomaar van Modulith, de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](<https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces>).  
@@ -576,7 +572,7 @@ package nl.quintor.workshop.customer.domain.port.inbound;
 import org.springframework.modulith.NamedInterface;
 ```
 
-Run nu nogmaals de `ModulithTest` en de `verifyModules` test zou nu moeten slagen.
+Run nu nogmaals de `ModulithTest`(verwijder eerst voor de zekerheid de `/target` directory), `verifyModules` zou nu moeten slagen.
 Een leuke feature van Spring Modulith is dat er in de `target` directory een plantuml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt? 
 Het komt precies overeen met de eerdere context map!  
 
@@ -603,7 +599,7 @@ public record RestCustomerResponseDto(UUID id,
 ```
 
 Ook in deze adapter zullen we de outbound port klassen moeten mappen naar de REST client dto's.
-Maak daarom ook een mapper aan genaamd `RestCustomerDtoMapper` en zie dat `customerId` expliciet gemapt moet worden naar `id`: 
+Maak daarom ook in dezelfde package een mapper aan genaamd `RestCustomerDtoMapper` en zie dat `customerId` expliciet gemapt moet worden naar `id`: 
 
 
 ```java
@@ -617,7 +613,7 @@ public interface RestCustomerDtoMapper {
 Zoals je ziet lost de `@Mapping` de property naamgeving mismatch op.  
 
 **B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren. 
-Maak een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen.  
+Maak in dezelfde package een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen.  
 
 ```java
 @Component
