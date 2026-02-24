@@ -590,9 +590,9 @@ We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `R
 Merk zo op dat je bij deze refactoring geen logica en klassen onder de `booking.domain` package hoeft aan te passen.
 Dit is typisch wat we willen met een hexagonal architecture.
 
-**A.** Het REST API contract is als volgt: PUT op `/customers/phoneNumber` welke een dto terugstuurt met `id` als property. 
+**A.** Het REST API contract is als volgt: PUT op `/customers/phoneNumber` met een request dto voor de naam, welke een dto terugstuurt met o.a. `id` als property. 
 Deze gaan we nodig hebben als `customerId` property in de `GetOrCreateCustomerResponse` response. 
-Maak een `RestCustomerResponseDto` record klasse aan in de `booking.adapter.outbound.manager`:  
+Maak een `RestCustomerResponseDto` record klasse aan in de `booking.adapter.outbound.manager.rest`:  
 
 
 ```java
@@ -617,9 +617,36 @@ public interface RestCustomerDtoMapper {
 Zoals je ziet lost de `@Mapping` de property naamgeving mismatch op.  
 
 **B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren. 
-Maak een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen. 
+Maak een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen.  
+
+```java
+@Component
+@RequiredArgsConstructor
+public class RestCustomerManager implements CustomerManager {
+    private final RestClient restClient;
+    private final RestCustomerDtoMapper dtoMapper;
+
+    @Override
+    public GetOrCreateCustomerResponse getOrCreateCustomer(GetOrCreateCustomerRequest request) {
+        try {
+            var requestDto = new CustomerPostRequestDto(request.name());
+            var responseDto = restClient.put()
+                    .uri("http://localhost:8080/customers/{phoneNumber}", request.phoneNumber())
+                    .body(requestDto)
+                    .retrieve()
+                    .body(RestCustomerResponseDto.class);
 
 
-**C.** Comment in de `SpringCustomerManager` de `@Component` uit, zodat deze bean niet meer beschikbaar is en de nieuwe `RestCustomerManager` gebruikt wordt. 
-Run de testen opnieuw, ze zouden nog steeds moeten slagen. 
+            return dtoMapper.toGetOrCreateCustomerResponse(responseDto);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred on the Customer API side", e);
+        }
+    }
+}
+```
+
+
+
+**C.** Comment in de `SpringCustomerManager` in `outbound.manager.spring` de `@Component` annotatie uit, zodat deze bean niet meer beschikbaar is en de nieuwe `RestCustomerManager` gebruikt wordt. 
+Run de tests opnieuw (verwijder eerst voor de zekerheid de `/target` directory), 5/6 van de `FunctionalIT` zouden nog steeds moeten slagen. 
 Is dat het geval, dan heb je zonder problemen een technische implementatie vervangen, terwijl er op domeinniveau er geen wijzigingen nodig waren! 
