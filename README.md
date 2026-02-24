@@ -372,7 +372,8 @@ want we hebben in de voorgaande stappen de regels van deze tests opgevolgd en de
 direct te praten met een repository in plaats van via een service. In de praktijk is de kans groot dat dit naar voren komt bij code review. Maar hoe fijn is het
 als we hier ook testautomatisering als achtervang hebben! Zeker met de toepassing van de hexagonal stijl, zijn er behoorlijk wat meer richtingen om op te kunnen gaan
 qua dependencies. Om archunit in de pipelines te laten draaien maakt een mooie stok achter de deur. Laten we eens kijken wat er gebeurt als we een aantal foutieve
-dependencies toepassen (in de Booking module):  
+dependencies toepassen (in de Booking module):
+
 - Voeg member field `BookingReponse dto = null;` toe aan interface `BookingApi` in `domain.port.inbound` (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
 - Voeg member field `private final H2BookingRepository h2BookingRepository;` toe aan klasse `BookingSpringController` in de inbound adapter laag.
 
@@ -380,11 +381,11 @@ Run nu de `ArchUnitHexagonalTest` in de test directory en zie **Wat** er faalt *
 Zou je dat ook verwachten volgens de hexagonal architectuur?  
 Draai de aanpassingen aan de implementatie terug zodat de tests weer slagen.
 
-**C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`). 
-De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter 
-inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken.   
+**C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`).
+De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter
+inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken.
 
-Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test 
+Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test
 blijft runnen. Zo weet je precies wat je minimaal nodig hebt.
 
 Het volgende diagram laat zien wat we willen afwingen met de archunit-tests:  
@@ -392,49 +393,71 @@ Het volgende diagram laat zien wat we willen afwingen met de archunit-tests:
 
 ## Stap 5: Booking uitbreiden met informatie vanuit het Customer domein
 
-We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in de `BookingPostRequestDto` en `Booking` model. Terugkijkend naar de eerdere context map, zien we dat Booking downstream is van Customer. Deze bounded context afhankelijk gaan we laten terugkomen in de implementatie, het project reflecteert daarmee letterlijk 'de business'. We gaan dit ondersteunen door middel van `Spring modulith`.
+We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in het `Booking` model.
+Terugkijkend naar de context map, zien we dat `Booking` context _downstream_ is van de `Customer` context.
+Met andere woorden de `Booking` context is afhankelijk van de `Customer` context, maar niet andersom.
+Deze bounded context afhankelijkheid gaan we laten terugkomen in de implementatie waardoor het project 'de business' reflecteert door gebruik te maken van een modulaire monoliet.
 
-**A.** Analyseer `domain.inbound.port` in de `Customer` module. Je ziet hier een command en reply die is gemaakt voor de registratie command en 'event' uit het eerdere event storming diagram. We willen nu dat bij het aanmaken van een booking, dit command ook wordt uitgevoerd als onderdeel van de flow. Dit houdt in dat het telefoonnummer verkregen vanuit de dto en vervolgens het `NewBookingCommand` als payload wordt gebruikt om een customer id te verkijgen vanuit de custoemr module.
+Een modulaire monoliet is een architectuurstijl waarbij de broncode is gestructureerd op basis van modules.
+Voor veel organisaties kan een modulaire monoliet een uitstekende keuze zijn, in plaats van een microservices architectuur.
+Het helpt een zekere mate van onafhankelijkheid te behouden in het softwareproject, wat de overstap naar een microservices-architectuur vergemakkelijkt wanneer dat nodig is.
+
+[Spring Modulith](https://spring.io/projects/spring-modulith) is een project van Spring dat gebruikt kan worden voor modulaire monolithische applicaties.
+Het begeleidt ontwikkelaars bij het vinden en werken met modules.
+Daarnaast ondersteunt het het bouwen van goed gestructureerde, domain-oriented Spring Boot-applicaties.
+
+De combinatie van een domain-oriented software architectuur en een modulaire monoliet architectuur wordt ook wel een [sliced onion architectuur](https://odrotbohm.de/2023/07/sliced-onion-architecture/) genoemd.
+
+**A.** Analyseer `domain.inbound.port` in de `Customer` module.
+Je ziet hier een `Command` en `Reply` die is gemaakt voor de 'klant registreren' command uit het eerdere event storming diagram.
+We willen dat bij het aanmaken van een booking de klant geregistreerd wordt als die nog niet bekend is, als onderdeel van de rit aanvraag registratie flow.
+Dit houdt in dat het telefoonnummer van de klant in het `NewBookingCommand` als payload wordt gebruikt om de customer id te verkrijgen vanuit de customer module, waarbij de customer aangemaakt wordt als die nog niet bestaat.
 
 **Hoe gaan we dit in hexagonal stijl doen?**  
-Normaal gesproken zou je in een monoliet als deze simpelweg een CustomerService kunnen gebruiken in de BookingService en zodoende sterk gekoppeld zijn in de domain layer. Dit betekent echter dat wanneer er in de toekomst bijvoorbeeld een architectuurwijziging plaatsvindt waarbij Customer een microservice wordt, dan moet er een refactor plaatsvinden zodat het booking domein op een andere manier alsnog aan de customer informatie komt.  
-Het zou dan echter een refactor zijn op de domeinlaag, terwijl het eigenlijk een technische wijziging is. Want vanuit het booking perspectief is er in principe niets gewijzigd, dezelfde informatie moet worden verzonden en verkregen. We gaan het daarom loose coupled opzetten met de kracht van de hexagonal stijl. Dit betekent wederom weer extra code, maar we krijgen er onderhoudbaar-, uitbreidbaar-, testbaarheid en meer voor terug.
+Normaal gesproken zou je in een monoliet als deze simpelweg een CustomerService kunnen gebruiken in de BookingService en zodoende sterke koppeling leggen tussen beiden.
+Dit betekent echter dat wanneer er in de toekomst bijvoorbeeld een architectuurwijziging plaatsvindt waarbij de Customer module een microservice wordt er een refactor plaatsvinden zodat het booking domein om op een andere manier alsnog de customer registratie te doen.  
+Dit zou dus een refactoring zijn op de domeinlaag, terwijl het een technische wijziging betreft en niet een functionele.
+Vanuit het booking perspectief is er in principe niets gewijzigd, dezelfde informatie moet worden verzonden en verkregen.
+We gaan het daarom loose coupled opzetten met de kracht van de hexagonal stijl.
+Dit betekent wederom extra code, maar we krijgen er aanpasbaarheid, onderhoudbaarheid, uitbreidbaarheid en testbaarheid voor terug.
 
-**B.** Bedenk eerst voor jezelf of overleg met anderen hoe je de volgende uitdaging zou oplossen met de kennis die je nu hebt: `hoe zorgen we ervoor dat de customer module letterlijk uit het project kan worden verwijderd, zonder dat er compile errors op het niveau van de booking domeinlaag ontstaan terwijl deze laag wel iets doet met de custoemr domein functionaliteit?`
+**B.** Bedenk eerst voor jezelf of overleg met anderen hoe je de volgende uitdaging zou oplossen met de kennis die je nu hebt: `hoe zorgen we ervoor dat de customer module letterlijk uit het project kan worden verwijderd, zonder dat er compile errors op het niveau van de booking domeinlaag ontstaan terwijl deze laag wel iets doet met de customer domein functionaliteit?`
 
 **Als antwoord op bovenstaande vraag, moeten we rekening houden met:**
 
-- De command en reply klasses in de inbound port van de customer module mogen niet in de domeinlaag van de booking module worden gebruikt, want dan kan de customer module niet worden verwijderd zonder refactor in de andere module
-- Vergelijkbaar met wat we met de repositories hebben gedaan, mag de `BookingService` niet direct praten met een klasse die de calls naar de `CustomerApi` verzorgen, er is dus weer een outbound port nodig
-- Om het punt hierboven voor elkaar te krijgen is er wederom weer een technische adapter nodig
+- De `Command` en `Reply` klasses in de `inbound.port` package van de customer module mogen niet in de domeinlaag van de booking module worden gebruikt, want dan kan de customer module niet worden verwijderd zonder refactor in de andere module.
+- Vergelijkbaar met wat we met de repositories hebben gedaan, mag de `BookingService` niet direct praten met een klasse die de calls naar de `CustomerApi` verzorgen, er is dus weer een outbound port nodig.
+- Om het punt hierboven voor elkaar te krijgen is er wederom weer een technische outbound adapter nodig.
 
-**C.** De ports van het booking domein moeten los blijven staan van de customer module, maak daarom een eigen versie van het command en reply aan in de `domain.outbound.port` package van de booking module met record klasses `GetOrCreateCustomerRequest`:
+**C.** De customer port van het booking domein moeten los blijven staan van de customer module, maak daarom een eigen versie van de command en reply aan in de `booking.domain.outbound.port` package met record klasses `GetOrCreateCustomerRequest` en `GetOrCreateCustomerResponse`:
 
 ```java
 public record GetOrCreateCustomerRequest(String name, String phoneNumber) {
 }
 ```
 
-en `GetOrCreateCustomerResponse`:
-
 ```java
 public record GetOrCreateCustomerResponse(UUID customerId) {
 }
 ```
 
-**D.** Maak een **interface** klasse `CustomerManager` aan die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`. Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.
+**D.** Maak een **interface** klasse `CustomerManager` aan in de `booking.domain.outbound.port` package die de bovenstaande types gebruikt als in- en output (respectievelijk) voor een methode `getOrCreateCustomer`. 
+Dit is alles wat de `BookingService` nodig heeft om zijn flow te kunnen uitvoeren.
 
-**E.** Breid dan ook nu met de tools van stappen c en d de `BookingService` in de `service` package uit ter realisatie van de volgende flow:
-
-1. De customer naam en telefoonnummer worden gehaald uit het binnengekomen `NewBookingCommand` argument
-2. De `CustomerManager` wordt gebruikt om een `GetOrCreateCustomerRequest` te maken en te versturen
-3. Uit het response van de manager, pak je het customerId en maak je een `Booking` aan zoals eerder, maar dan met het verkregen customerId in plaats van een random UUID
+**E.** Breid dan ook nu met de tools van stappen C en D de `BookingService` in de `service` package uit ter realisatie van de volgende flow:  
+1. Het customer telefoonnummer wordt gehaald uit het binnengekomen `NewBookingCommand` argument.
+2. De `CustomerManager` wordt gebruikt om een `GetOrCreateCustomerRequest` te maken en te versturen.
+3. Uit het response van de manager, pak je het customerId en maak je een `Booking` aan zoals eerder, maar dan met het verkregen customerId in plaats van een random UUID.
 4. De booking wordt opgeslagen zoals eerder via de `BookingRepository`
 
-**Het booking domein is nu gereed, ongeacht waar de customer informatie vandaan komt (e.g. in de monoliet zelf, of een externe microservice), de business logica hoeft niet worden aangepast!**
 
-**F.** We gaan nu een technische implementatie leveren in de vorm van een adapter die binnen het Spring process de methode calls gaat doen naar wat in run time daadwerkelijk de `CustomerService` is, welke een implementatie is van `CustomerApi`.  
-Net zoals bij de repositories, realiseren we dit in de `adapter.outbound` package van Booking. Maak in de child package `manager.spring` een klasse `SpringCustomerMapper`:
+**Het booking domein is nu gereed en ongeacht hoe de customer domein koppeling zal zijn (e.g. in de monoliet zelf, of een externe microservice), de business logica hoeft niet te worden aangepast!**
+
+
+**F.** We gaan nu een technische implementatie leveren in de vorm van een adapter die binnen het Spring process de methode calls gaat doen naar wat in runtime daadwerkelijk de `CustomerService` is, welke een implementatie is van de `CustomerApi` interface.  
+Net zoals bij de booking repository, realiseren we dit in de `booking.adapter.outbound` package. 
+Maak in de child package `manager` de `SpringCustomerMapper` klasse:   
+
 
 ```java
 @Mapper(componentModel = "spring")
@@ -446,22 +469,34 @@ public interface SpringCustomerMapper {
 }
 ```
 
-Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen. Je kunt je voorstellen dat in een microservice adapter hier eerst nog dto's moeten worden gemaakt als de properties bijvoorbeeld JSON-naamgeving annotaties nodig hebben.  
-Maak vervolgens de adapter klasse `SpringCustomerManager` die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk). Gebruik de aangemaakte mapper en de `CustomerApi` uit de customer module om de methode te implementeren.
+Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen. 
+Maak vervolgens de adapter klasse `SpringCustomerManager` die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk). 
+
 
 **G.** Als het goed is ziet het project er nu als volgt uit (let op: vereenvoudigd tot hoofdzakelijk de nieuwe klasses uit stap 5):  
 ![Beginstaat icm booking](docs/assignment-diagrammen/beginstaat-plus-booking.drawio.svg)
 
-**H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory. De drie tests die beginnen met `getAllCustomers_` zouden moeten slagen. De overige tests kun je voor nu negeren.
+**H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory. 
+De drie tests die beginnen met `getAllCustomers_` zouden moeten slagen. 
+De overige tests kun je voor nu nog negeren.
+
 
 **Spring Modulith**  
-In de pom van het project is al een dependency toegevoegd voor Spring Modulith. Deze tool helpt bij het structureren van een monolitische applicatie in modules en het afdwingen van de regels die daarbij horen. Het zorgt ervoor dat de modules losgekoppeld blijven en dat de afhankelijkheden tussen modules duidelijk zijn. Of dit correct is gedaan zijn er [default rules](https://docs.spring.io/spring-modulith/reference/verification.html) die met een verify API kunnen worden gecheckt.  
-Omdat we nu twee modules (Customer en Booking root directories worden als modules gezien door Modulith) hebben voor twee bounded contexts, willen we modulith gebruiken om ons te helpen bij het in de gaten houden dat we niet onbedoeld klasses van de ene context in de andere gaan gebruiken.
+In de pom van het project is al een dependency toegevoegd voor Spring Modulith. 
+Deze tool helpt bij het structureren van een monolitische applicatie in modules en het afdwingen van de regels die daarbij horen. 
+Het zorgt ervoor dat de modules losgekoppeld blijven en dat de afhankelijkheden tussen modules duidelijk zijn. 
+Of dit correct is gedaan zijn er [default rules](<https://docs.spring.io/spring-modulith/reference/verification.html>) die met een verify API kunnen worden gecheckt.  
+Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `booking` root packages worden als modules gezien door Spring Modulith), willen we modulith gebruiken om ons te helpen bij het in de gaten houden dat we niet onbedoeld klassen van de ene module in de andere gebruiken. 
 
-**I.** Run de test `ModulithTest` in de `test` directory, deze faalt als het goed is. Lees de foutmelding die hierbij wordt gegeven.  
-We hebben in de adapter laag van Booking een koppeling gelegd met klasses uit Customer. Dat mag niet zomaar van Modulith, de klasses moeten namelijk eerst worden [exposed via een API package of named interface](https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces).  
-`CustomerApi` en de command en reply klasses zullen moeten worden exposed. We kiezen ervoor om dit in `inbound.port` te laten staan (kun je over discussiëren), daarom is het nodig dat deze package of iedere klasse een named interface wordt. We kiezen voor het gemak om de gehele package een named interface te maken.  
-Maak bestand `package-info.java` in de package met definitie:
+**I.** Run de test `ModulithTest` in de `test` directory, deze faalt als het goed is. 
+Lees de foutmelding die hierbij wordt gegeven.  
+We hebben in de adapter laag van Booking een koppeling gelegd met de inbound port klassen uit Customer. 
+Dat mag niet zomaar van Modulith, de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](<https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces>).  
+`CustomerApi` en de command en reply klassen in de `inbound.port` package zullen moeten worden exposed. 
+Daarvoor is het nodig dat de package of iedere klasse als `@NamedInterface` geannoteerd wordt. 
+We kiezen voor het gemak om de gehele package een named interface te maken.
+Maak bestand `package-info.java` in de `customer.inbound.port` package met definitie:  
+
 
 ```java
 @NamedInterface
@@ -470,19 +505,24 @@ package nl.quintor.workshop.customer.domain.port.inbound;
 import org.springframework.modulith.NamedInterface;
 ```
 
-Run nu nogmaals de `ModulithTest`, `verifyModules` zou nu moeten slagen.  
-Een leuke feature van Modulith is dat er in de targer directory een puml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt? Het komt precies overeen met de eerdere context map!  
-![Modulith modules overview](docs/assignment-diagrammen/modulith-generated-plaatje.png)
+Run nu nogmaals de `ModulithTest` en de `verifyModules` test zou nu moeten slagen.
+Een leuke feature van Spring Modulith is dat er in de `target` directory een plantuml diagram wordt gegenereerd die de afhankelijkheden tussen de modules laat zien, en wat blijkt? 
+Het komt precies overeen met de eerdere context map!  
+
 
 ## Stap 6: CustomerManager Spring adapter vervangen door REST adapter
 
-Als het customer domein op een gegeven moment geen onderdeel meer is van de Rebü applicatie, maar een losse applicati, dan zal deze via een andere API gekoppeld moeten worden.
-In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen. We gaan indirect de CustomerController gebruiken door met een REST client tegen onszelf te praten.
-We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `RestCustomerManager`.
-Merk op dat je bij deze refactoring geen logica in het booking domein hoeft aan te passen.
+Als het customer domein op een gegeven moment geen onderdeel meer is van de Rebü applicatie, maar een los systeem of service, dan zal deze via een andere API gekoppeld moeten worden.
+In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen, maar gaan we indirect de `CustomerController` gebruiken via REST. 
 
-**A.** Het REST API contract is als volgt: PUT op /customers/phoneNumber welke een dto terugstuurt met ondere andere `id` als property. Deze gaan we nodig hebben als `customerId` property in `Booking`. Voor de SpringAdapter moesten we een command en reply mappen, maar hier moeten we dus mappen op de REST API.
-Maak daarom een `RestCustomerResponseDto` record klasse aan in de `adapter.outbound.manager.rest` package van Booking:
+We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `RestCustomerManager`.
+Merk zo op dat je bij deze refactoring geen logica en klassen onder de `booking.domain` package hoeft aan te passen.
+Dit is typisch wat we willen met een hexagonal architecture.
+
+**A.** Het REST API contract is als volgt: PUT op `/customers/phoneNumber` welke een dto terugstuurt met `id` als property. 
+Deze gaan we nodig hebben als `customerId` property in de `GetOrCreateCustomerResponse` response. 
+Maak een `RestCustomerResponseDto` record klasse aan in de `booking.adapter.outbound.manager`:  
+
 
 ```java
 public record RestCustomerResponseDto(UUID id,
@@ -491,7 +531,9 @@ public record RestCustomerResponseDto(UUID id,
 }
 ```
 
-Deze kan het API-response parsen. We moeten uiteindelijk toewerken naar een return type `GetOrCreateCustomerResponse` om het interface te implementeren dat de domainlaag kent. Deze werkt met `customerId` naamgeving i.p.v. `id` Maak daarom ook een mapper aan genaamd `RestCustomerDtoMapper`:
+Ook in deze adapter zullen we de outbound port klassen moeten mappen naar de REST client dto's.
+Maak daarom ook een mapper aan genaamd `RestCustomerDtoMapper` en zie dat `customerId` expliciet gemapt moet worden naar `id`: 
+
 
 ```java
 @Mapper(componentModel = "spring")
@@ -501,21 +543,12 @@ public interface RestCustomerDtoMapper {
 }
 ```
 
-Zoals je ziet lost deze de property naamgeving mismatch op.
+Zoals je ziet lost de `@Mapping` de property naamgeving mismatch op.  
 
-**B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren. Maak een klasse `RestCustomerManager` die `CustomerManager` implementeert. Geef deze klasse ook een memberfield `private final RestClient restClient`. Deze is al verzorgd in de configuratie.
-Implmenteer nu de adapter door:
+**B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren. 
+Maak een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen. 
 
-1. `restClient.put()` te gebruiken voor een call naar localhost 8080
-2. Het endpoint is `/customers/{phoneNumber}` waarbij `phoneNumber` afkomstig is van de `GetOrCreateCustomerRequest`
-3. Een request body met `name` meesturen via `RestCustomerPostRequestDto`
-4. Parse de response via `RestCustomerResponseDto`
-5. Map de response naar `GetOrCreateCustomerResponse` via de mapper en return dit
 
-**C.** Voordat we deze adapter in runtime gaan gebruiken, check nog een keer of de tests die starten met `getAllCustomers` en `createNewBooking_ValidBooking_StoresBookingInDB` uit `FunctionalIT` nog steeds slagen.
-Is dat het geval, comment dan in `SpringCustomerManager` `@Component` uit. Voeg aan `RestCustomerManager` de annotatie `@Component` toe. Run de tests opnieuw, ze zouden nog steeds moeten slagen. Is dat het geval, dan heb je zonder problemen
-een technische implementatie vervangen, terwijl er op domeinniveau geen wijzigingen nodig waren!
-
-TODO: project eindstaat diagram hier
-
-## Stap 7: (optioneel) Validation en exception handling
+**C.** Comment in de `SpringCustomerManager` de `@Component` uit, zodat deze bean niet meer beschikbaar is en de nieuwe `RestCustomerManager` gebruikt wordt. 
+Run de testen opnieuw, ze zouden nog steeds moeten slagen. 
+Is dat het geval, dan heb je zonder problemen een technische implementatie vervangen, terwijl er op domeinniveau er geen wijzigingen nodig waren! 
