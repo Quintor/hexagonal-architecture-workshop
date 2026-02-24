@@ -379,7 +379,7 @@ als we hier ook testautomatisering als achtervang hebben! Zeker met de toepassin
 qua dependencies. Om archunit in de pipelines te laten draaien maakt een mooie stok achter de deur. Laten we eens kijken wat er gebeurt als we een aantal foutieve
 dependencies toepassen (in de Booking module):
 
-- Voeg member field `BookingReponse dto = null;` toe aan interface `BookingApi` in `domain.port.inbound` (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
+- Voeg member field `BookingResponseDto dto = null;` toe aan interface `BookingApi` in `domain.port.inbound` (aan een methode zou realistischer zijn, maar we willen even geen compilatiefouten)
 - Voeg member field `private final H2BookingRepository h2BookingRepository;` toe aan klasse `BookingSpringController` in de inbound adapter laag.
 
 Run nu de `ArchUnitHexagonalTest` in de test directory en zie **Wat** er faalt **en waarom**.
@@ -388,7 +388,8 @@ Draai de aanpassingen aan de implementatie terug zodat de tests weer slagen.
 
 **C.** Er ontbreekt nog package die we eigenlijk ook moeten 'beschermen': de domeinmodellen (`..model..`).
 De service is al wel opgenomen in de tests. Kopieer `domain_service_should_only_depend_on_domain()` ter
-inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken.
+inspiratie om de test `domain_models_should_not_depend_on_other_packages()` te maken. Zie de eindstaat branch ter controle van jouw 
+implementatie.
 
 Tip: maak eerst de test aan zonder dependencies toe te staan. Vul steeds verder aan terwijl je tussendoor de test
 blijft runnen. Zo weet je precies wat je minimaal nodig hebt.
