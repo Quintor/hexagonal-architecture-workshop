@@ -41,7 +41,7 @@ Dit betekent dat we slim moeten omgaan met de communicatie tussen domeinen en bi
 
 ## Casus 'taxibedrijf Rëbu'
 
-Het systeem omvat functionaliteiten voor klanten en planners om te komen tot taxiritafspraken.
+Het systeem omvat functionaliteiten voor klanten en planners om te komen tot taxirit afspraken.
 In de gebruikersflow (zie event storming afbeelding) kan een klant simpelweg met zijn telefoonnummer een boeking aanvragen zodat een planner hiermee aan de slag gaat.
 Het systeem bepaalt initieel de beschikbaarheid en de planner maakt hierop beslissingen.
 Kan een boeking niet direct worden vervuld, dan kan het systeem ook alternatieve opties bepalen.
@@ -176,7 +176,7 @@ De service klasse heeft als 'logica' nu alleen het omzetten van het command naar
 Het is dan minder toepasselijk om een mapper te maken die command naar booking omzet, ook gezien de properties niet één op één overeenkomen.
 Daarom maken we hier deze keuze om programmatisch NewBookingCommand om te zetten.
 
-Als het goed is, ziet de implementatie van het domein binnen de booking module er nu als volgt uit:  
+Als het goed is ziet de implementatie van het domein binnen de booking module er nu als volgt uit:  
 ![Booking domein](docs/assignment-diagrammen/booking-domain-packages.drawio.png)
 
 ## Stap 2: Booking persistentie
@@ -211,16 +211,16 @@ public class BookingEntity {
 }
 ```
 
-**B.** Zoals je wellicht weet van Spring Data JPA-repositories, moet er een interface worden aangemaakt die overerft van `JpaRepository`.
+**B.** Zoals je wellicht al weet van Spring Data JPA-repositories, moet er een interface worden aangemaakt die overerft van `JpaRepository`.
 Maak daarom de onderstaande `SpringDataBookingRepository` interface in dezelfde package aan voor het opslaan van de `BookingEntity`.
 
 ```java
   @Repository
-  public interface SpringDataBookingRepository extends JpaRepository<BookingEntity, UUID> {
-  }
+public interface SpringDataBookingRepository extends JpaRepository<BookingEntity, UUID> {
+}
 ```
 
-**C.** Zoals je wellicht nu ziet is de `BookingRepository` interface van het domein niet hetzelfde als de `SpringDataBookingRepository` interface.
+**C.** Zoals je nu ziet is de `BookingRepository` interface van het domein niet hetzelfde als de `SpringDataBookingRepository` interface.
 Met een adapter klasse in de outbound adapter laag van de hexagonal architecture zullen we deze twee aan elkaar moeten koppelen.
 We moeten dus een adapter klasse maken die de `BookingRepository` interface implementeert en intern gebruik maakt van de `SpringDataBookingRepository` interface en ook de mapping verzorgt tussen de JPA entity `BookingEntity` en de domein klasse `Booking`.
 
@@ -255,7 +255,7 @@ public class H2BookingRepository implements BookingRepository {
 }
 ```
 
-Als het goed is ziet het project er nu als volgt uit en hebben we onze eerste outbound adapter geïmplementeerd die de technische implementatie heeft ontkoppeld van de domeinlogica:
+Het project ziet er als volgt uit en nu we onze eerste outbound adapter hebben geïmplementeerd die de technische implementatie heeft ontkoppeld van de domeinlogica:
 ![Booking domein met persistence adapter](docs/assignment-diagrammen/booking-domain-plus-persistence.drawio.png)
 
 ## Stap 3: Booking REST API
@@ -279,11 +279,11 @@ Maak in `adapter.inbound.web` package het `BookingPostRequestDto` record aan:
 
 ```java
 public record BookingPostRequestDto(String customerName,
-                             String customerPhoneNumber,
-                             LocalDateTime dateTime,
-                             String fromLocation,
-                             String toLocation,
-                             byte passengerAmount) {
+                                    String customerPhoneNumber,
+                                    LocalDateTime dateTime,
+                                    String fromLocation,
+                                    String toLocation,
+                                    byte passengerAmount) {
 }
 ```
 
@@ -337,12 +337,12 @@ public class BookingSpringController {
 }
 ```
 
-**C.** Als het goed is, ziet het project er nu als volgt uit en hebben we onze eerste inbound adapter geïmplementeerd die de technische implementatie heeft ontkoppeld van de domeinlogica:  
+**C.** We hebben nu onze eerste inbound adapter geïmplementeerd die de technische implementatie heeft ontkoppeld van de domeinlogica. Het project ziet er nu als volgt uit:  
 ![Booking domein met persistence en web adapter](docs/assignment-diagrammen/booking-domain-plus-persistence.drawio-en-web.drawio.png)
 
 **Hoe zit het nu met Spring bean management?**  
 We hebben nu in de adapter laag beans gemaakt met de gebruikelijke Spring annotaties.
-Mogelijk vraag je je af hoe dat echter zit voor de `BookingService`, want die injecten we immers in de `BookingSpringController` controller via de `BookingApi` interface.  
+Mogelijk vraag je je af hoe dat echter zit voor de `BookingService`, want die injecteren we immers in de `BookingSpringController` controller via de `BookingApi` interface.  
 Omdat de verantwoordelijkheid in de adapter laag ligt bij het implementeren van de techniek gebruiken we daar gemakkelijk ook dus de Spring component annotaties.
 Het domein houden we echter zoveel mogelijk onafhankelijk van techniek en het Spring framework.
 Om alsnog de dependency injection te regelen voor `BookingApi`, configureren we dit in een aparte spring configuration klasse.
@@ -379,7 +379,7 @@ We hebben in de workshop al veel keuzes gemaakt op het gebied van de softwarearc
 [ArchUnit](https://www.archunit.org) kan ons daarbij helpen.
 Het is een test library die helpt bij het afdwingen van architectuurregels zodat we die automatisch kunnen valideren.
 
-**A.** Open `ArchUnitHexagonalTest` in de test directory en neem deze even door. Run de tests ook een keertje. Als het goed is slagen ze allemaal,
+**A.** Open `ArchUnitHexagonalTest` in de test directory en neem deze even door. Run de tests ook een keertje. Die zouden nu allemaal moeten slagen,
 want we hebben in de voorgaande stappen de regels van deze tests opgevolgd en de beginstaat van het project ook en daarmee voldaan aan de architectuur.
 
 **B.** Er zijn natuurlijk foutjes die je kan maken die vrij duidelijk zijn, zoals het gebruiken van een service in een model of in een controller
@@ -409,7 +409,7 @@ Het volgende diagram laat zien wat we willen afwingen met de archunit-tests:
 ## Stap 5: Booking uitbreiden met informatie vanuit het Customer domein
 
 We gaan nu daadwerkelijk wat doen met de customer informatie die we al hebben klaargezet in het `Booking` model.
-Terugkijkend naar de context map, zien we dat `Booking` context _downstream_ is van de `Customer` context.
+Terugblikkend op de context map, zien we dat `Booking` context _downstream_ is van de `Customer` context.
 Met andere woorden de `Booking` context is afhankelijk van de `Customer` context, maar niet andersom.
 Deze bounded context afhankelijkheid gaan we laten terugkomen in de implementatie waardoor het project 'de business' reflecteert door gebruik te maken van een modulaire monoliet.
 
@@ -428,15 +428,15 @@ Je ziet hier een `Command` en `Reply` die is gemaakt voor de 'klant registreren'
 We willen dat bij het aanmaken van een booking de klant geregistreerd wordt als die nog niet bekend is, als onderdeel van de rit aanvraag registratie flow.
 Dit houdt in dat het telefoonnummer van de klant in het `NewBookingCommand` als payload wordt gebruikt om de customer id te verkrijgen vanuit de customer module, waarbij de customer aangemaakt wordt als die nog niet bestaat.
 
-**Hoe gaan we dit in hexagonal stijl doen?**  
+**Hoe kan dit binnen een hexagonal architecture gedaan worden?**  
 Normaal gesproken zou je in een monoliet als deze simpelweg een CustomerService kunnen gebruiken in de BookingService en zodoende sterke koppeling leggen tussen beiden.
-Dit betekent echter dat wanneer er in de toekomst bijvoorbeeld een architectuurwijziging plaatsvindt waarbij de Customer module een microservice wordt er een refactor plaatsvinden zodat het booking domein om op een andere manier alsnog de customer registratie te doen.  
+Dit betekent echter dat wanneer er in de toekomst bijvoorbeeld een architectuurwijziging plaatsvindt waarbij de Customer module een microservice wordt, er een refactor plaats moet vinden zodat het booking domein op een andere manier alsnog de customer registratie kan doen.  
 Dit zou dus een refactoring zijn op de domeinlaag, terwijl het een technische wijziging betreft en niet een functionele.
 Vanuit het booking perspectief is er in principe niets gewijzigd, dezelfde informatie moet worden verzonden en verkregen.
 We gaan het daarom loose coupled opzetten met de kracht van de hexagonal stijl.
 Dit betekent wederom extra code, maar we krijgen er aanpasbaarheid, onderhoudbaarheid, uitbreidbaarheid en testbaarheid voor terug.
 
-**B.** Bedenk eerst voor jezelf of overleg met anderen hoe je de volgende uitdaging zou oplossen met de kennis die je nu hebt: `hoe zorgen we ervoor dat de customer module letterlijk uit het project kan worden verwijderd, zonder dat er compile errors op het niveau van de booking domeinlaag ontstaan terwijl deze laag wel iets doet met de customer domein functionaliteit?`
+**B.** Bedenk eerst voor jezelf of overleg met anderen hoe je de volgende uitdaging zou oplossen met de kennis die je nu hebt: `Hoe zorgen we ervoor dat de customer module letterlijk uit het project kan worden verwijderd, zonder dat er compile errors op het niveau van de booking domeinlaag ontstaan terwijl deze laag wel iets doet met de customer domein functionaliteit?`
 
 **Als antwoord op bovenstaande vraag, moeten we rekening houden met:**
 
@@ -507,14 +507,14 @@ Maak in de child package `manager.spring` de `SpringCustomerMapper` klasse:
 @Mapper(componentModel = "spring")
 public interface SpringCustomerMapper {
 
-  GetOrCreateCustomerCommand toCommand(GetOrCreateCustomerRequest request);
+    GetOrCreateCustomerCommand toCommand(GetOrCreateCustomerRequest request);
 
-  GetOrCreateCustomerResponse fromReply(GetOrCreateCustomerReply reply);
+    GetOrCreateCustomerResponse fromReply(GetOrCreateCustomerReply reply);
 }
 ```
 
-Een mapper is hier een makkelijke keuze omdat we in-process in principe dezelfde data overbrengen.
-Maak vervolgens de adapter klasse `SpringCustomerManager` in dezelfde package aan die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf eigenlijk).
+Een mapper is hier een makkelijke keuze omdat we in principe dezelfde data overbrengen.
+Maak de adapter klasse `SpringCustomerManager` in dezelfde package aan die `CustomerManager` implementeert (Spring wordt hier gezien als de technologie van in-process code calls, het is dus gewoon een adapter op de applicatie zelf).
 
 ```java
 @Component
@@ -536,18 +536,18 @@ public class SpringCustomerManager implements CustomerManager {
 We moeten ook nog `BookingModuleConfiguration` in de `booking.config` package bijwerken in verband met de toegevoegde dependency aan `BookingService`:
 
 ```java
-// Bestaande code hier
+// ..Bestaande code
 
-    @Bean
-    public BookingApi bookingApi(
-            BookingRepository bookingRepository, CustomerManager customerManager) {
-        return new BookingService(bookingRepository, customerManager);
-    }
+@Bean
+public BookingApi bookingApi(
+        BookingRepository bookingRepository, CustomerManager customerManager) {
+    return new BookingService(bookingRepository, customerManager);
+}
 
-// Bestaande code hier
+// Bestaande code..
 ```
 
-**G.** Als het goed is ziet het project er nu als volgt uit (let op: vereenvoudigd tot hoofdzakelijk de nieuwe klasses uit stap 5):  
+**G.** Controleer of het project er nu als volgt uit ziet (let op: vereenvoudigd tot hoofdzakelijk de nieuwe klasses uit stap 5):  
 ![Beginstaat icm booking](docs/assignment-diagrammen/beginstaat-plus-booking.drawio.png)
 
 **H.** Laten we kijken of het werkt, run `FunctionalIT` in de test directory (verwijder eerst voor de zekerheid de `/target` directory).
@@ -559,12 +559,12 @@ In de pom van het project is al een dependency toegevoegd voor Spring Modulith.
 Deze tool helpt bij het structureren van een monolitische applicatie in modules en het afdwingen van de regels die daarbij horen.
 Het zorgt ervoor dat de modules losgekoppeld blijven en dat de afhankelijkheden tussen modules duidelijk zijn.
 Of dit correct is gedaan zijn er [default rules](https://docs.spring.io/spring-modulith/reference/verification.html) die met een verify API kunnen worden gecheckt.  
-Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `booking` root packages worden als modules gezien door Spring Modulith), willen we modulith gebruiken om ons te helpen bij het in de gaten houden dat we niet onbedoeld klassen van de ene module in de andere gebruiken.
+Omdat we nu twee modules hebben voor de twee bounded contexts (`customer` en `booking` root packages worden als modules gezien door Spring Modulith), willen we modulith gebruiken om ons te helpen bij het controleren dat we niet onbedoeld klassen van de ene module in de andere gebruiken.
 
-**I.** Run de `ModulithTest` in de `test` directory, `verifyModules` faalt als het goed is.
+**I.** Run de `ModulithTest` in de `test` directory, we zullen zien dat `verifyModules` faalt.
 Lees de foutmelding die hierbij wordt gegeven.  
 We hebben in de adapter laag van Booking een koppeling gelegd met de inbound port klassen uit Customer.
-Dat mag niet zomaar van Modulith, de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces).  
+Dat mag niet zomaar van Modulith; de klassen van een module moeten namelijk eerst worden [exposed via een API package of named interface](https://docs.spring.io/spring-modulith/reference/fundamentals.html#modules.named-interfaces).  
 `CustomerApi` en de command en reply klassen in de `port.inbound` package zullen moeten worden exposed.
 Daarvoor is het nodig dat de package of iedere klasse als `@NamedInterface` geannoteerd wordt.
 We kiezen voor het gemak om de gehele package een named interface te maken.
@@ -584,11 +584,11 @@ Het komt precies overeen met de eerdere context map!
 ## Stap 6: CustomerManager Spring adapter vervangen door REST adapter
 
 Als het customer domein op een gegeven moment geen onderdeel meer is van de Rebü applicatie, maar een los systeem of service, dan zal deze via een andere API gekoppeld moeten worden.
-In de workshop gaan we niet daadwerkelijk een aparte applicatie opzetten vanwege tijdsredenen, maar gaan we indirect de `CustomerController` gebruiken via REST.
+Om het kort te houden gaan we tijdens de workshop niet daadwerkelijk een aparte applicatie opzetten, maar gaan we indirect de `CustomerController` gebruiken via REST.
 
 We gaan hiervoor de `SpringCustomerManager` adapter vervangen door een nieuwe `RestCustomerManager`.
-Merk zo op dat je bij deze refactoring geen logica en klassen onder de `booking.domain` package hoeft aan te passen.
-Dit is typisch wat we willen met een hexagonal architecture.
+Merk op dat je bij deze refactoring geen logica en klassen onder de `booking.domain` package hoeft aan te passen.
+Dit is wat we willen zien bij hexagonal architecture.
 
 **A.** Het REST API contract is als volgt: PUT op `/customers/phoneNumber` met een request dto voor de naam, welke een dto terugstuurt met o.a. `id` als property.
 Deze gaan we nodig hebben als `customerId` property in de `GetOrCreateCustomerResponse` response.
@@ -607,12 +607,12 @@ Maak daarom ook in dezelfde package een mapper aan genaamd `RestCustomerDtoMappe
 ```java
 @Mapper(componentModel = "spring")
 public interface RestCustomerDtoMapper {
-  @Mapping(source = "id", target = "customerId")
-  GetOrCreateCustomerResponse toGetOrCreateCustomerResponse(RestCustomerResponseDto dto);
+    @Mapping(source = "id", target = "customerId")
+    GetOrCreateCustomerResponse toGetOrCreateCustomerResponse(RestCustomerResponseDto dto);
 }
 ```
 
-Zoals je ziet lost de `@Mapping` de property naamgeving mismatch op.
+Zoals je ziet, lost de `@Mapping` de property naamgeving mismatch op.
 
 **B.** We gaan dan nu de aangemaakte dto en mapper gebruiken om de nieuwe adapter te implementeren.
 Maak in dezelfde package een klasse `RestCustomerManager` die `CustomerManager` implementeert en de `RestClient` gebruikt om de customer REST endpoint aan te roepen.
