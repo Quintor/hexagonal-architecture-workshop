@@ -5,9 +5,9 @@ in een monolithische applicatie die bestaat uit meerdere domeinen van een kleine
 
 ## Programma
 
-15:45-16:00: introductiepresentatie tot hexagonal architectuur door een layered architecture voorbeeld stap voor stap om te zetten naar hexagonal  
-16:00-16:50: uitvoeren opdrachten ter uitwerking van de casus  
-16:50-17:00: overview gerealiseerde applicatie
+14:45-15:10: introductiepresentatie tot hexagonal architectuur door een layered architecture voorbeeld stap voor stap om te zetten naar hexagonal  
+15:10-16:20: uitvoeren opdrachten ter uitwerking van de casus  
+16:20-16:30: overview gerealiseerde applicatie ter afsluiting
 
 ## Leerdoelen
 
